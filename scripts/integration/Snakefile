@@ -3,7 +3,8 @@ rule integration_prepare:
         adata  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="file"),
         script = "scripts/runPP.py"
     output:
-        join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "adata_pre.{prep}")
+        cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/adata_pre.{prep}"
+        #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "adata_pre.{prep}")
     message:
         """
         Preparing adata
@@ -19,24 +20,13 @@ rule integration_prepare:
         seurat    = lambda wildcards: "-l" if wildcards.prep == "RDS" else "",
         cmd       = f"conda run -n {cfg.py_env} python"
     benchmark:
-        join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"),
-                  "prep_{prep}.benchmark")
+        str(cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/prep_{prep}.benchmark")
+        #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "prep_{prep}.benchmark")
     shell:
         """
         {params.cmd} {input.script} -i {input.adata} -o {output} -b {params.batch_key} \
         --hvgs {params.hvgs} {params.scale} {params.rout} {params.seurat}
         """
-
-
-def get_prep_adata(wildcards):
-    """
-    get R or python adata file depending on integration method
-    """
-    if cfg.get_from_method(wildcards.method, "R"):
-        prep = "RDS"
-    else:
-        prep = "h5ad"
-    return expand(rules.integration_prepare.output, **wildcards, prep=prep)
 
 
 def get_celltype_option_for_integration(wildcards):
@@ -52,10 +42,11 @@ def get_celltype_option_for_integration(wildcards):
 # ------------------------------------------------------------------------------
 rule integration_run_python:
     input:
-        adata  = get_prep_adata,
+        adata = lambda w: expand(rules.integration_prepare.output, **w, prep="h5ad"),
         pyscript = "scripts/runIntegration.py"
     output:
-        cfg.get_filename_pattern("integration", "single", "h5ad")
+        cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad"
+        #cfg.get_filename_pattern("integration", "single", "h5ad")
     message:
         """
         Run {wildcards.method} on {wildcards.scaling} data
@@ -72,7 +63,8 @@ rule integration_run_python:
         timing    = "-t" if cfg.timing else "",
         cmd       = f"conda run -n {cfg.py_env} python"
     benchmark:
-        f'{cfg.get_filename_pattern("integration", "single", "h5ad")}.benchmark'
+        str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad.benchmark")
+        #f'{cfg.get_filename_pattern("integration", "single", "h5ad")}.benchmark'
     shell:
         """
         {params.cmd} {input.pyscript} -i {input.adata} -o {output} \
@@ -87,10 +79,11 @@ rule integration_run_python:
 # ------------------------------------------------------------------------------
 rule integration_run_r:
     input:
-        adata  = get_prep_adata,
+        adata  = lambda w: expand(rules.integration_prepare.output, **w, prep="RDS"),
         rscript = "scripts/runMethods.R"
     output:
-        cfg.get_filename_pattern("integration", "single", "rds")
+        cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS"
+        #cfg.get_filename_pattern("integration", "single", "rds")
     message:
         """
         Run {wildcards.method} on {wildcards.scaling} data
@@ -105,7 +98,8 @@ rule integration_run_r:
         cmd       = f"conda run -n {cfg.r_env} Rscript",
         timing    = "-t" if cfg.timing else ""
     benchmark:
-        f'{cfg.get_filename_pattern("integration", "single", "rds")}.benchmark'
+        str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS.benchmark")
+        #f'{cfg.get_filename_pattern("integration", "single", "rds")}.benchmark'
     shell:
         """
         {params.cmd} {input.rscript} -i {input.adata} -o {output} -b {params.batch_key} \
@@ -119,10 +113,12 @@ rule integration_run_r:
 # ------------------------------------------------------------------------------
 rule convert_RDS_h5ad:
     input:
-        i = cfg.get_filename_pattern("integration", "single", "rds"),
+        i = rules.integration_run_r.output,
+        #cfg.get_filename_pattern("integration", "single", "rds"),
         script = "scripts/runPost.py"
     output:
-        cfg.get_filename_pattern("integration", "single", "rds_to_h5ad")
+        cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.h5ad"
+        #cfg.get_filename_pattern("integration", "single", "rds_to_h5ad")
     message:
         """
         Convert integrated data from {wildcards.method} into h5ad
@@ -140,7 +136,21 @@ rule convert_RDS_h5ad:
         """
 
 
+int_func, py_wildcards = cfg.get_all_wildcards(methods=cfg.get_all_python_methods())
+rule integrated_python:
+    input: expand(rules.integration_run_python.output, int_func, **py_wildcards)
+    message: "Python integration methods"
+
+
+int_func, r_wildcards = cfg.get_all_wildcards(methods=cfg.get_all_R_methods())
+rule integrated_R:
+    input: expand(rules.integration_run_r.output, int_func, **r_wildcards)
+    message: "R integration methods"
+
+
 rule integration:
     input:
-        cfg.get_all_file_patterns("integration")
+        rules.integrated_python.input,
+        rules.integrated_R.input
+        #cfg.get_all_file_patterns("integration")
     message: "Integration done"
