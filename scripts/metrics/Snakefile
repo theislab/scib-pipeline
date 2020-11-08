@@ -1,0 +1,59 @@
+# ------------------------------------------------------------------------------
+# Compute metrics
+# ------------------------------------------------------------------------------
+rule metrics_single:
+    input:
+        u      = lambda w: cfg.get_from_scenario(w.scenario, key="file"),
+        i      = lambda w: cfg.get_integrated_for_metrics(rules, w.method),
+        script = "scripts/metrics/metrics.py"
+    output: cfg.ROOT / "{scenario}/metrics/{scaling}/{hvg}/{method}_{o_type}.csv"
+    message:
+        """
+        Metrics {wildcards}
+        output: {output}
+        """
+    params:
+        batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
+        label_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="label_key"),
+        organism  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="organism"),
+        assay     = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="assay"),
+        hvgs      = lambda wildcards: cfg.get_feature_selection(wildcards.hvg),
+        cmd       = f"conda run -n {cfg.py_env} python"
+    shell:
+        """
+        {params.cmd} {input.script} -u {input.u} -i {input.i} -o {output} -m {wildcards.method} \
+        -b {params.batch_key} -l {params.label_key} --type {wildcards.o_type} \
+        --hvgs {params.hvgs} --organism {params.organism} --assay {params.assay} -v
+        """
+
+
+umetr_func, umetr_wildcards = cfg.get_all_wildcards(type_="unintegrated", output_types=True)
+rule metrics_unintegrated:
+    input: expand(rules.metrics_single.output, umetr_func, **umetr_wildcards)
+    message: "Collect all unintegrated metrics"
+
+
+metr_func, metr_wildcards = cfg.get_all_wildcards(type_="default", output_types=True)
+rule metrics_integrated:
+    input: expand(rules.metrics_single.output, metr_func, **metr_wildcards)
+    message: "Collect all integrated metrics"
+
+
+def all_metrics(wildcards):
+    files = rules.metrics_integrated.input
+    if cfg.unintegrated_m:
+        files.extend(rules.metrics_unintegrated.input)
+    return files
+
+
+rule metrics:
+    input:
+        tables = all_metrics,
+        script = f"scripts/metrics/merge_metrics.py"
+    output:
+        cfg.ROOT / "metrics.csv"
+    message: "Merge all metrics"
+    params:
+        cmd = f"conda run -n {cfg.py_env} python"
+    shell: "{params.cmd} {input.script} -i {input.tables} -o {output} --root {cfg.ROOT}"
+

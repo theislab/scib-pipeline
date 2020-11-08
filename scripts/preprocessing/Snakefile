@@ -1,0 +1,29 @@
+rule integration_prepare:
+    input:
+        adata  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="file"),
+        script = "scripts/runPP.py"
+    output:
+        cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/adata_pre.{prep}"
+        #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "adata_pre.{prep}")
+    message:
+        """
+        Preparing adata
+        wildcards: {wildcards}
+        parameters: {params}
+        output: {output}
+        """
+    params:
+        batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
+        hvgs      = lambda wildcards: cfg.get_feature_selection(wildcards.hvg),
+        scale     = lambda wildcards: "-s" if wildcards.scaling == "scaled" else "",
+        rout      = lambda wildcards: "-r" if wildcards.prep == "RDS" else "",
+        seurat    = lambda wildcards: "-l" if wildcards.prep == "RDS" else "",
+        cmd       = f"conda run -n {cfg.py_env} python"
+    benchmark:
+        str(cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/prep_{prep}.benchmark")
+        #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "prep_{prep}.benchmark")
+    shell:
+        """
+        {params.cmd} {input.script} -i {input.adata} -o {output} -b {params.batch_key} \
+        --hvgs {params.hvgs} {params.scale} {params.rout} {params.seurat}
+        """

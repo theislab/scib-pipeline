@@ -1,0 +1,66 @@
+# ------------------------------------------------------------------------------
+# Save embeddings
+# ------------------------------------------------------------------------------
+rule embeddings_single:
+    input:
+        adata  = lambda w: cfg.get_integrated_for_metrics(rules, w.method),
+        script = "scripts/visualization/save_embeddings.py"
+    output:
+        coords = cfg.ROOT / "{scenario}/embeddings/{scaling}/{hvg}/{method}_{o_type}.csv",
+        batch_png = cfg.ROOT / "{scenario}/embeddings/{scaling}/{hvg}/{method}_{o_type}_batch.png",
+        label_png = cfg.ROOT / "{scenario}/embeddings/{scaling}/{hvg}/{method}_{o_type}_labels.png"
+    message:
+        """
+        SAVE EMBEDDING
+        Scenario: {wildcards.scenario} {wildcards.scaling} {wildcards.hvg}
+        Method: {wildcards.method} {wildcards.o_type}
+        Input: {input.adata}
+        Output: {output}
+        """
+    params:
+        batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
+        label_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="label_key"),
+        cmd       = f"conda run -n {cfg.py_env} python"
+    shell:
+        """
+        {params.cmd} {input.script} --input {input.adata} --outfile {output.coords} \
+            --method {wildcards.method} --batch_key {params.batch_key} \
+            --label_key {params.label_key} --result {wildcards.o_type}
+        """
+
+
+uemb_func, uemb_wildcards = cfg.get_all_wildcards(type_="unintegrated", output_types=True)
+rule embeddings_unintegrated:
+    input:
+        coords = expand(rules.embeddings_single.output.coords, uemb_func, **uemb_wildcards),
+        batch_png = expand(rules.embeddings_single.output.batch_png, uemb_func, **uemb_wildcards),
+        label_png = expand(rules.embeddings_single.output.label_png, uemb_func, **uemb_wildcards)
+    message:
+        "Collect all unintegrated embeddings"
+
+emb_func, emb_wildcards = cfg.get_all_wildcards(type_="default", output_types=True)
+rule embeddings_integrated:
+    input:
+        coords = expand(rules.embeddings_single.output.coords, emb_func, **emb_wildcards),
+        batch_png = expand(rules.embeddings_single.output.batch_png, emb_func, **emb_wildcards),
+        label_png = expand(rules.embeddings_single.output.label_png, emb_func, **emb_wildcards)
+    message: "Collect all integrated embeddings"
+
+def all_embeddings(wildcards):
+    files = rules.embeddings_integrated.input.coords
+    if cfg.unintegrated_m:
+        files.extend(rules.embeddings_unintegrated.input.coords)
+    return files
+
+
+rule embeddings:
+    input:
+        csvs = all_embeddings
+    output: cfg.ROOT / "embeddings.csv"
+    message:
+        "Completed all embeddings"
+    shell:
+     """
+     echo '{input.csvs}' | tr " " "\n" > {output}
+     """
+
