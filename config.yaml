@@ -14,7 +14,7 @@ SCALING:
   - unscaled
   - scaled
 
-METHODS: # method name : ouput type(s)
+METHODS: # method name : output type(s)
   mnn: 
     output_type: full
   scanorama:

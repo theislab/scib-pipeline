@@ -75,7 +75,10 @@ class ParsedConfig:
         if key not in self.METHODS[method]:
             return False
             # raise ValueError(f"{key} not a valid attribute of scenario {scenario}")
-        return self.METHODS[method][key]
+        value = self.METHODS[method][key]
+        if key == 'output_type':
+            return value if isinstance(value, list) else [value]
+        return value
 
     def get_hvg(self, wildcards, adata_path):
         n_hvgs = self.get_feature_selection(wildcards.hvg)
@@ -111,6 +114,7 @@ class ParsedConfig:
         """
         TODO: include method subsetting
         Collect all wildcards for wildcard-dependent rule
+        :param methods: subset of methods, default: None, using all methods defined in config
         :param type_: if 'unintegrated', will treat differently than default
         :param output_types: output type or list of output types to be considered.
             If output_types==None, all output types are included.
@@ -128,8 +132,8 @@ class ParsedConfig:
         if output_types is True:
             output_types = ParsedConfig.OUTPUT_TYPES
         elif isinstance(output_types, list):
-            for ot_per_method in output_types:
-                if ot_per_method not in ParsedConfig.OUTPUT_TYPES:
+            for ot in output_types:
+                if ot not in ParsedConfig.OUTPUT_TYPES:
                     raise ValueError(f"{output_types} not a valid output type")
 
         if type_ == 'unintegrated':
@@ -144,7 +148,7 @@ class ParsedConfig:
             for method in methods:
                 scaling = self.SCALING.copy()
                 if self.get_from_method(method, "no_scale"):
-                    scaling.remove("scale")
+                    scaling.remove("scaled")
 
                 def reshape_wildcards(*lists):
                     cart_prod = itertools.product(*lists)
@@ -152,16 +156,17 @@ class ParsedConfig:
 
                 if isinstance(output_types, list):
                     # output type wildcard included
-                    ot_per_method = set(output_types).intersection(self.get_from_method(method, "output_type"))
-                    # [x for x in output_type if x in output_types]
-                    ot_per_method, method, scaling, scenarios, features = reshape_wildcards(
-                        ot_per_method,
+                    ot = set(output_types).intersection(self.get_from_method(method, "output_type"))
+                    if not ot:
+                        break  # skip if method output type is not defined in output_types
+                    ot, method, scaling, scenarios, features = reshape_wildcards(
+                        ot,
                         [method],
                         scaling,
                         self.get_all_scenarios(),
                         self.get_all_feature_selections()
                     )
-                    wildcards["o_type"].extend(ot_per_method)
+                    wildcards["o_type"].extend(ot)
                     wildcards["method"].extend(method)
                     wildcards["scaling"].extend(scaling)
                     wildcards["scenario"].extend(scenarios)

@@ -1,4 +1,4 @@
-from config.ScibConfig import *
+from scibp.ScibConfig import *
 
 #configfile: "config.yaml"
 cfg = ParsedConfig(config)
