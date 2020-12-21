@@ -1,8 +1,8 @@
 # Pipeline for benchmarking atlas-level single-cell integration
 
 This repository contains the snakemake pipeline for the benchmarking study for data integration tools.
-In this study, we benchmark 10 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 40 
-methods combinations on 60 batches of gene expression and chromatin accessibility data.
+In this study, we benchmark 16 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 68 
+methods combinations on 85 batches of gene expression and chromatin accessibility data.
 The pipeline uses the [`scIB`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
 analysis of the different steps and combinations of preprocesssing and integration methods.
 
@@ -41,18 +41,19 @@ Define the number of CPU threads you want to use with `snakemake --cores N_CORES
 To run the pipeline, simply run `snakemake`.
 
 ## Tools
-Tools to be compared include:
-- [Seurat v3](https://github.com/satijalab/seurat)
-- [TrVae](https://github.com/theislab/trvae)
-- [scVI](https://github.com/YosefLab/scVI)
-- [CONOS](https://github.com/hms-dbmi/conos) [tutorial](https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/conos.html)
-- [MNN](https://github.com/chriscainx/mnnpy)
+Tools that are compared include:
 - [Scanorama](https://github.com/brianhie/scanorama)
-- [LIGER](https://github.com/MacoskoLab/liger)
+- [scANVI](https://github.com/chenlingantelope/HarmonizationSCANVI)
+- [FastMNN](https://bioconductor.org/packages/batchelor/)
+- [scGen](https://github.com/theislab/scgen)
 - [BBKNN](https://github.com/Teichlab/bbknn)
+- [scVI](https://github.com/YosefLab/scVI)
+- [Seurat v3 (CCA and RPCA)](https://github.com/satijalab/seurat)
 - [Harmony](https://github.com/immunogenomics/harmony)
+- [Conos](https://github.com/hms-dbmi/conos) [tutorial](https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/conos.html)
 - [Combat](https://scanpy.readthedocs.io/en/stable/api/scanpy.pp.combat.html) [paper](https://academic.oup.com/biostatistics/article/8/1/118/252073)
-<!--- - [scMerge](https://github.com/SydneyBioX/scMerge)
-- [scAlign](https://github.com/quon-titative-biology/scAlign) -->
-<!--- - BBKNN + [scAEspy](https://gitlab.com/cvejic-group/scaespy)? -->
-<!--- - [scANVI](https://github.com/chenlingantelope/HarmonizationSCANVI) -->
+- [MNN](https://github.com/chriscainx/mnnpy)
+- [TrVae](https://github.com/theislab/trvae)
+- [DESC](https://github.com/eleozzr/desc)
+- [LIGER](https://github.com/MacoskoLab/liger)
+- [SAUCIE](https://github.com/KrishnaswamyLab/SAUCIE)
