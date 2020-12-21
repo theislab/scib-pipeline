@@ -1,24 +1,12 @@
-# Benchmarking atlas-level data integration in single-cell genomics
+# Pipeline for benchmarking atlas-level single-cell integration
 
-This repository contains code and analysis for the benchmarking study for data integration tools.
-In this study, we benchmark 10 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 40 methods combinations on
-60 batches of gene expression and chromatin accessibility data.
+This repository contains the snakemake pipeline for the benchmarking study for data integration tools.
+In this study, we benchmark 10 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 40 
+methods combinations on 60 batches of gene expression and chromatin accessibility data.
+The pipeline uses the [`scIB`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
+analysis of the different steps and combinations of preprocesssing and integration methods.
 
 ![Workflow](./figure.png)
-
-We created the python package `scIB` to streamline the integration process and to integrate it into
-a scanpy workflow. Additionally, we created an environment to allow easy integration of R integration methods
-into the scanpy workflow.
-
-Furthermore, the package allows for evaluation of integration quality of different datasets if cell type annotations are present using our novel metrics.
-
-The `scIB` python package is in the folder scIB. It can be installed using `pip install -e .` run in the root directory.
-R helper functions for R integration methods can be found in the `R` directory.
-The `scripts` folder contains scripts for preparing the data, running the methods, postprocessing and calculation of the metrics.
-The `notebooks` folder contains jupyter notebooks for testing and demonstrating functions of the `scIB` package as well as notebooks
-for preprocessing of the data.
-
-
 
 ## Installation
 To reproduce the results from this study, three different conda environments are needed.
@@ -51,33 +39,6 @@ The script expects one `.h5ad` file containing all batches per data scenario.
 To load the config file run `snakemake --configfile config.yaml`.
 Define the number of CPU threads you want to use with `snakemake --cores N_CORES`. To produce an overview of tasks that will be run, use `snakemake -n`.
 To run the pipeline, simply run `snakemake`.
-
-## Structure of the scIB package
-The package contains several modules for the different steps of the integration and benchmarking pipeline.
-Functions for the integration methods are in `scIB.integrate`. The methods are called using `scIB.integration.runMETHOD(adata, BATCH)`.
-`scIB.preprocessing` contains methods for preprocessing of the data such as normalisation, scaling or highly variable gene selection per batch.
-The metrics are located at `scIB.metrics`. To run multiple metrics in one run, use the `scIB.metrics.metrics()` function.
-
-### Metrics
-For a detailed description of the metrics implemented in this package, please see the [manuscript](https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2).
-
-Batch removal metrics include:
-- Principal component regression (`pcr_comparison()`)
-- Batch ASW (`silhouette()`)
-- K-nearest neighbour batch effect (`kBET()`)
-- Graph connectivity (`graph_connectivity()`)
-- Graph iLISI (`lisi_graph()`)
-
-Biological conservation metrics include:
-- Normalised mutual information (`nmi()`)
-- Adjusted Rand Index (`ari()`)
-- Cell type ASW (`silhouette_batch()`)
-- Isolated label score F1 (`isolated_labels()`)
-- Isolated label score ASW (`isolated_labels()`)
-- Cell cycle conservation (`cell_cycle()`)
-- Highly variable gene conservation (`hvg_overlap()`)
-- Trajectory conservation (`trajectory_conservation()`)
-- Graph cLISI (`lisi_graph()`)
 
 ## Tools
 Tools to be compared include:
