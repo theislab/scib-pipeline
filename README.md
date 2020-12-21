@@ -1,6 +1,6 @@
 # Pipeline for benchmarking atlas-level single-cell integration
 
-This repository contains the snakemake pipeline for the benchmarking study for data integration tools.
+This repository contains the snakemake pipeline for our benchmarking study for data integration tools.
 In this study, we benchmark 16 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 68 
 methods combinations on 85 batches of gene expression and chromatin accessibility data.
 The pipeline uses the [`scIB`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
