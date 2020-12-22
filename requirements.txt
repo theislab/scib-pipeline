@@ -1,0 +1,4 @@
+snakemake
+click
+click_log
+scIB @ git+https://github.com/theislab/scib@master#egg=scib

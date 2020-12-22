@@ -1,0 +1,94 @@
+ROOT: data/output
+r_env : scIB-R-integration
+py_env : scIB-python
+conv_env : scIB-R-conversion
+timing: false
+
+unintegrated_metrics: false # whether to include metrics on unintegrated datasets
+
+DATA_SCENARIOS:
+  expression:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/expression/adata.h5ad
+#  simulation:
+#    batch_key: batch
+#    label_key: celltype
+#    organism: human
+#    assay: simulation
+#    file: data/simulation/adata.h5ad
+#  atac:
+#    batch_key: batch
+#      label_key: celltype
+#      organism: human
+#    assay: atac
+#    file: data/atac/adata.h5ad
+
+FEATURE_SELECTION:
+  hvg: 2000 # number of highly variable genes to select (only for expression data)
+  full_feature: 0
+
+SCALING:
+  - unscaled
+  - scaled
+
+METHODS: # method name : output type(s)
+  mnn: 
+    output_type: full
+  scanorama:
+    output_type:
+      - embed
+      - full
+  seurat:
+    R: true
+    output_type: full
+  seuratrpca:
+    R: true
+    output_type: full
+  saucie:
+    output_type:
+      - full
+      - embed
+  trvae:
+    no_scale: true
+    output_type: 
+      - embed
+      - full
+  # trvaep:
+  #   no_scale: true
+  #   output_type:
+  #     - embed
+  #     - full
+  harmony:
+    R: true
+    output_type: embed
+  bbknn:
+    output_type: knn
+  scvi:
+    no_scale: true
+    output_type: embed
+  conos:
+    R: true
+    output_type: knn
+  combat:
+    output_type: full
+  liger:
+    no_scale: true
+    R: true
+    output_type: embed
+  scgen:
+    output_type: full
+    use_celltype: true
+  scanvi:
+    output_type: embed
+    no_scale: true
+    use_celltype: true
+  fastmnn:
+    R: true
+    output_type:
+      - embed
+      - full
+  desc:
+    output_type: embed

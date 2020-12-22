@@ -1,7 +1,7 @@
-from scibp.ScibConfig import *
+import scibp
 
 #configfile: "config.yaml"
-cfg = ParsedConfig(config)
+cfg = scibp.ParsedConfig(config)
 wildcard_constraints:
     hvg = "hvg|full_feature"
 
