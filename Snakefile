@@ -1,4 +1,4 @@
-from config.ScibConfig import *
+from ScibConfig import *
 
 #configfile: "config.yaml"
 cfg = ParsedConfig(config)
@@ -9,7 +9,6 @@ include: "scripts/preprocessing/Snakefile"
 include: "scripts/integration/Snakefile"
 include: "scripts/metrics/Snakefile"
 include: "scripts/visualization/Snakefile"
-include: "scripts/metrics/cc_score/Snakefile"
 
 rule all:
     input:
