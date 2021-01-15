@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------------
 rule integration_run_python:
     input:
-        adata = lambda w: expand(rules.integration_prepare.output, **w, prep="h5ad"),
+        adata=expand(rules.integration_prepare.output, prep="h5ad", allow_missing=True),
         pyscript = "scripts/integration/runIntegration.py"
     output:
         cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad"
@@ -39,11 +39,9 @@ rule integration_run_python:
 # ------------------------------------------------------------------------------
 rule integration_run_r:
     input:
-        adata  = lambda w: expand(rules.integration_prepare.output, **w, prep="RDS"),
-        rscript = "scripts/runMethods.R"
-    output:
-        cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS"
-        #cfg.get_filename_pattern("integration", "single", "rds")
+        adata=expand(rules.integration_prepare.output, prep="RDS", allow_missing=True),
+        rscript="scripts/integration/runMethods.R"
+    output: cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS"
     message:
         """
         Run {wildcards.method} on {wildcards.scaling} data
@@ -73,7 +71,7 @@ rule integration_run_r:
 rule convert_RDS_h5ad:
     input:
         i = rules.integration_run_r.output,
-        script = "scripts/runPost.py"
+        script = "scripts/integration/runPost.py"
     output:
         cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.h5ad"
     message:
