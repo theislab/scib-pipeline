@@ -27,7 +27,25 @@ and `env_vars_deactivate.sh` to `etc/conda/deactivate.d/` to every environment.
 In the `scIB-R-integration` environment, R packages need to be installed manually.
 Activate the environment and install the packages `scran`, `Seurat` and `Conos` in R. `Conos` needs to be installed using R devtools.
 See [here](https://github.com/hms-dbmi/conos).
-
+Furthermore, to ensure that `rpy2` uses the correct R version, the `LD_LIBRARY_PATH` variable has to be set accordingly.
+First, determine the path of the environment using `rpy2`
+```
+echo $CONDA_PREFIX
+```
+Then deactivate the environment to prevent unwanted effects.
+Next, set the `LD_LIBRARY_PATH` variable in the `${CONDA_PREFIX}/etc/conda/activate.d/activate-r-base.sh`
+```
+LD_LIBRARY_PATH_OLD=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib/R/lib/"
+```
+and the following lines in `${CONDA_PREFIX}/etc/conda/deactivate.d/deactivate-r-base.sh`
+```
+LD_LIBRARY_PATH=LD_LIBRARY_PATH_OLD
+export LD_LIBRARY_PATH
+unset LD_LIBRARY_PATH_OLD
+```
+to restore the variable to its value prior to activating the environment.
 
 ## Running the integration methods
 This package allows to run a multitude of single cell data integration methods in both `R` and `python`.
