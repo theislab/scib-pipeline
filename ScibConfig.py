@@ -22,7 +22,7 @@ class ParsedConfig:
 
         # TODO: define and check schema of config
 
-        self.ROOT = Path(config["ROOT"])
+        self.ROOT = Path(config["ROOT"]).resolve()
         self.DATA_SCENARIOS = config["DATA_SCENARIOS"]
         self.SCALING = config["SCALING"]
         self.FEATURE_SELECTION = config["FEATURE_SELECTION"]
@@ -80,14 +80,13 @@ class ParsedConfig:
             return value if isinstance(value, list) else [value]
         return value
 
-    def get_hvg(self, wildcards, adata_path):
+    def get_hvg(self, wildcards, output_pattern, **kwargs):
         n_hvgs = self.get_feature_selection(wildcards.hvg)
         if n_hvgs == 0:
             return ""
         if self.get_from_method(wildcards.method, "R"):
-            path_parts = adata_path.split('.')
-            path_parts[-2] += '_hvg'
-            hvg_path = '.'.join(path_parts)
+            p = Path(expand(output_pattern, **wildcards, **kwargs)[0])
+            hvg_path = (p.parent / f'{p.stem}_hvg').with_suffix(p.suffix)
             return f'-v "{hvg_path}"'
         return f"-v {n_hvgs}"
 
@@ -148,7 +147,7 @@ class ParsedConfig:
             for method in methods:
                 scaling = self.SCALING.copy()
                 if self.get_from_method(method, "no_scale"):
-                    scaling.remove("scaled")
+                    scaling = ['unscaled']
 
                 def reshape_wildcards(*lists):
                     cart_prod = itertools.product(*lists)

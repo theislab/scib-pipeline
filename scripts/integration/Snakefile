@@ -51,8 +51,8 @@ rule integration_run_r:
         hvgs: {params.hvgs}
         """
     params:
-        batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
-        hvgs      = lambda wildcards, input: cfg.get_hvg(wildcards, input.adata[0]),
+        batch_key = lambda w: cfg.get_from_scenario(w.scenario, key="batch_key"),
+        hvgs      = lambda w: cfg.get_hvg(w, rules.integration_prepare.output, prep="RDS"),
         cmd       = f"conda run -n {cfg.r_env} Rscript",
         timing    = "-t" if cfg.timing else ""
     benchmark:
