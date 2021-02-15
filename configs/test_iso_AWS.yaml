@@ -1,0 +1,90 @@
+ROOT: data
+
+DATA_SCENARIOS:
+  test_data:
+    batch_key: batch
+    label_key: celltype
+    organism: mouse
+    assay: expression
+    file: data/adata_norm.h5ad
+  test_data_rep:
+    batch_key: batch
+    label_key: celltype
+    organism: mouse
+    assay: expression
+    file: data/adata_norm.h5ad
+
+r_env : scIB-R-integration
+py_env : scIB-python
+
+timing: false
+unintegrated_metrics: true
+
+FEATURE_SELECTION:
+  #hvg: 2000
+  full_feature: 0
+
+SCALING:
+  - unscaled
+  #- scaled
+
+METHODS:
+# python methods
+  bbknn:
+    output_type: knn
+  combat:
+    output_type: full
+  #desc:
+  #  output_type: embed
+  #mnn:
+  #  output_type: full
+  #saucie:
+  #  output_type:
+  #    - full
+  #    - embed
+  #scanorama:
+  #  output_type:
+  #    - embed
+  #   - full
+  scanvi:
+    output_type: embed
+    no_scale: true
+    use_celltype: true
+  scgen:
+    output_type: full
+    use_celltype: true
+  scvi:
+    no_scale: true
+    output_type: embed
+  #trvae:
+  #  no_scale: true
+  # output_type:
+  #    - embed
+  #    - full
+  # trvaep:
+  #   no_scale: true
+  #   output_type:
+  #     - embed
+  #     - full
+# R methods
+  #conos:
+  #  R: true
+  #  output_type: knn
+  fastmnn:
+    R: true
+    output_type:
+      - embed
+      - full
+  harmony:
+    R: true
+    output_type: embed
+  liger:
+    no_scale: true
+    R: true
+    output_type: embed
+  seurat:
+    R: true
+    output_type: full
+  seuratrpca:
+      R: true
+      output_type: full
