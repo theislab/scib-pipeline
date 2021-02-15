@@ -15,15 +15,15 @@ timing: false
 unintegrated_metrics: false
 
 FEATURE_SELECTION:
-  hvg: 2000
-  #full_feature: 0
+  #hvg: 2000
+  full_feature: 0
 
 SCALING:
   - unscaled
   #- scaled
 
 METHODS:
-# pyton methods
+# python methods
   bbknn:
     output_type: knn
   combat:
@@ -44,9 +44,9 @@ METHODS:
     output_type: embed
     no_scale: true
     use_celltype: true
-  #scgen:
-  #  output_type: full
-  #  use_celltype: true
+  scgen:
+    output_type: full
+    use_celltype: true
   scvi:
     no_scale: true
     output_type: embed
@@ -61,7 +61,7 @@ METHODS:
   #     - embed
   #     - full
 # R methods
-  #conos:
+  #conos: # temporary directory issue
   #  R: true
   #  output_type: knn
   fastmnn:
