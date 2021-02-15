@@ -4,17 +4,6 @@ from collections import defaultdict
 import itertools
 
 
-def as_list(x):
-    return x if isinstance(x, list) else [x]
-
-
-def join_path(*args):
-    path = Path(args[0])
-    for d in args[1:]:
-        path = path / d
-    return str(path)
-
-
 class ParsedConfig:
     OUTPUT_TYPES = ['full', 'embed', 'knn']
 
@@ -66,7 +55,7 @@ class ParsedConfig:
 
     def get_feature_selection(self, key):
         if key not in self.FEATURE_SELECTION:
-            raise ValueError(f"{key} not a valid key for scaling")
+            raise ValueError(f"{key} not a valid key for feature selection")
         return self.FEATURE_SELECTION[key]
 
     def get_from_method(self, method, key):
@@ -186,7 +175,7 @@ class ParsedConfig:
 
     def get_integrated_for_metrics(self, rules, method):
         if method == "unintegrated":
-            return Path(rules.integration_prepare.output).with_suffix(".h5ad")
+            return Path(rules.integration_prepare.output[0]).with_suffix(".h5ad")
         elif self.get_from_method(method, "R"):
             return rules.convert_RDS_h5ad.output
         else:
