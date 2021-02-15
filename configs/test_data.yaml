@@ -10,7 +10,6 @@ DATA_SCENARIOS:
 
 r_env : scIB-R-integration
 py_env : scIB-python
-conv_env : scIB-R-conversion
 
 timing: false
 unintegrated_metrics: false

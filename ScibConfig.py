@@ -19,7 +19,6 @@ class ParsedConfig:
         self.timing = config["timing"]
         self.r_env = config["r_env"]
         self.py_env = config["py_env"]
-        self.conv_env = config["conv_env"]
         try:
             self.unintegrated_m = config["unintegrated_metrics"]
         except:
