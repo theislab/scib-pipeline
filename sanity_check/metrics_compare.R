@@ -6,12 +6,12 @@ library(ggrepel)
 #' Compare two different metrics files
 #' useful when tweaking pipeline or metrics
 
-new_metrics <- fread('data/metrics.csv')  # most recent metrics output
-old_metrics <- fread('data/metrics_master.csv')  # previous metrics output
+new_metrics <- fread('data/metrics_batches_isolabel-fix.csv')  # most recent metrics output
+old_metrics <- fread('data/metrics_batches_master.csv')  # previous metrics output
 
-new_label <- 'isolabel-fix'
-old_label <- 'master'
-comparison <- paste(new_label, old_label, sep = '_')
+new_label <- 'isolabel_fix_batches_full'
+old_label <- 'master_batches_full'
+comparison <- paste(new_label, old_label, sep = '-')
 
 new_metrics[, type := 'new']
 old_metrics[, type := 'old']
@@ -46,10 +46,11 @@ dt[, label := ifelse(
   NA)
 ]
 
-ggplot(dt, aes(old, new, col = method)) +
+ggplot(dt, aes(old, new)) +
   geom_abline(slope = 1, intercept = 0, col = "grey") +
-  geom_point(size = 1) +
-  xlim(0, 1) + ylim(0, 1) +
+  geom_hline(yintercept = 0, col = 'grey') +
+  geom_point(aes(col = method), size = 1) +
+  #xlim(0, 1) + ylim(0, 1) +
   facet_wrap(.~metric) +
   geom_text_repel(aes(label = label,  col = method), size = 3, max.overlaps = NA) +
   labs(
@@ -62,5 +63,5 @@ ggplot(dt, aes(old, new, col = method)) +
 
 ggsave(
   file.path('data', 'sanity', paste(comparison, 'png', sep = '.')),
-  width = 7, height = 7
+  width = 8, height = 9
 )
