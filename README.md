@@ -47,16 +47,52 @@ unset LD_LIBRARY_PATH_OLD
 ```
 to restore the variable to its value prior to activating the environment.
 
-## Running the integration methods
-This package allows to run a multitude of single cell data integration methods in both `R` and `python`.
-We use [Snakemake](https://snakemake.readthedocs.io/en/stable/) to run the pipeline.
-The parameters of the run are configured using the `config.yaml` file.
-See the `DATA_SCENARIOS` section to change the data used for integration.
-The script expects one `.h5ad` file containing all batches per data scenario.
+## Running the Pipeline
 
-To load the config file run `snakemake --configfile config.yaml`.
-Define the number of CPU threads you want to use with `snakemake --cores N_CORES`. To produce an overview of tasks that will be run, use `snakemake -n`.
-To run the pipeline, simply run `snakemake`.
+This repository contains a [snakemake](https://snakemake.readthedocs.io/en/stable/) pipeline to run integration methods and metrics reproducibly for different data scenarios preprocessing setups.
+
+### Generate Test data
+
+A script in `data/` can be used to generate test data.
+This is useful, in order to ensure that the installation was successful before moving on to a larger dataset.
+More information on how to use the data generation script can be found in `data/README.md`.
+
+### Setup Configuration File
+
+The parameters and input files are specified in config files, that can be found in `configs/`.
+In the `DATA_SCENARIOS` section you can define the input data per scenario.
+The main input per scenario is a preprocessed `.h5ad` file of an anndata with batch and cell type annotations.
+
+TODO: explain different entries
+
+### Pipeline Commands
+
+To call the pipeline on the test data
+
+```commandline
+snakemake --configfile configs/test_data.yaml -n
+```
+
+This gives you an overview of the jobs that will be run.
+In order to execute these jobs, call
+
+```commandline
+snakemake --configfile configs/test_data.yaml --cores N_CORES
+```
+
+where `N_CORES` defines the number of threads to use.
+
+More snakemake commands can be found in the [documentation](snakemake.readthedocs.io/).
+
+### Visualise the Workflow
+A dependency graph of the workflow can be created anytime and is useful to gain a general understanding of the workflow.
+Snakemake can create a `graphviz` representation of the rules, which can be piped into an image file.
+
+```shell script
+snakemake --configfile configs/test_data.yaml --rulegraph | dot -Tpng -Grankdir=TB > dependency.png
+```
+
+![Snakemake workflow](./dependency.png)
 
 ## Tools
 Tools that are compared include:
