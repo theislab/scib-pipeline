@@ -1,16 +1,28 @@
 import scanpy as sc
 import numpy as np
 import scIB
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
     adata = sc.datasets.paul15()
     adata.obs['celltype'] = adata.obs['paul15_clusters']
+
+    # add batches
     np.random.seed(42)
-    adata.obs['batch'] = np.random.randint(1, 5, adata.n_obs)
+    n_batch = 5
+    adata.obs['batch'] = np.random.randint(0, n_batch, adata.n_obs)
+    # add batch effect to counts
+    for i in range(n_batch):
+        adata[adata.obs.batch == i].X = adata[adata.obs.batch == i].X + i
     adata.obs['batch'] = adata.obs['batch'].astype(str)
     adata.obs['batch'] = adata.obs['batch'].astype("category")
+
     adata.layers['counts'] = adata.X
+    sc.pp.filter_cells(adata, min_counts=1)
+    sc.pp.filter_genes(adata, min_counts=1)
+
     scIB.preprocessing.reduce_data(
         adata,
         pca=pca,
