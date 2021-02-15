@@ -1,7 +1,6 @@
 rule integration_prepare:
     input:
-        adata  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="file"),
-        script = "scripts/preprocessing/runPP.py"
+        adata  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="file")
     output: cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/adata_pre.{prep}"
     message:
         """
@@ -22,6 +21,7 @@ rule integration_prepare:
         #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "prep_{prep}.benchmark")
     shell:
         """
-        {params.env} python {input.script} -i {input.adata} -o {output} -b {params.batch_key} \
+        {params.env} python scripts/preprocessing/runPP.py -i {input.adata} \
+        -o {output} -b {params.batch_key} \
         --hvgs {params.hvgs} {params.scale} {params.rout} {params.seurat}
         """
