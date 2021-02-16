@@ -1,19 +1,5 @@
 ROOT: data
 
-DATA_SCENARIOS:
-  test_data:
-    batch_key: batch
-    label_key: celltype
-    organism: mouse
-    assay: expression
-    file: data/adata_norm.h5ad
-  test_data_rep:
-    batch_key: batch
-    label_key: celltype
-    organism: mouse
-    assay: expression
-    file: data/adata_norm.h5ad
-
 r_env : scIB-R-integration
 py_env : scIB-python
 
@@ -88,3 +74,17 @@ METHODS:
   seuratrpca:
       R: true
       output_type: full
+
+DATA_SCENARIOS:
+  test_data:
+    batch_key: batch
+    label_key: celltype
+    organism: mouse
+    assay: expression
+    file: data/adata_norm.h5ad
+  test_data_rep:
+    batch_key: batch
+    label_key: celltype
+    organism: mouse
+    assay: expression
+    file: data/adata_norm.h5ad
