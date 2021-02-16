@@ -36,7 +36,7 @@ Then deactivate the environment to prevent unwanted effects.
 Next, set the `LD_LIBRARY_PATH` variable in the `${CONDA_PREFIX}/etc/conda/activate.d/activate-r-base.sh`
 ```
 LD_LIBRARY_PATH_OLD=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
+export LD_LIBRARY_PATH_OLD
 export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib/R/lib/"
 ```
 and the following lines in `${CONDA_PREFIX}/etc/conda/deactivate.d/deactivate-r-base.sh`
