@@ -6,6 +6,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
+    """
+    Download paul15 dataset and preprocess for data integration pipeline
+    """
     adata = sc.datasets.paul15()
     adata.obs['celltype'] = adata.obs['paul15_clusters']
 
@@ -16,8 +19,7 @@ def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
     # add batch effect to counts
     for i in range(n_batch):
         adata[adata.obs.batch == i].X = adata[adata.obs.batch == i].X + i
-    adata.obs['batch'] = adata.obs['batch'].astype(str)
-    adata.obs['batch'] = adata.obs['batch'].astype("category")
+    adata.obs['batch'] = adata.obs['batch'].astype(str).astype("category")
 
     adata.layers['counts'] = adata.X
     sc.pp.filter_cells(adata, min_counts=1)
@@ -34,6 +36,9 @@ def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
 
 
 def get_adata_pbmc():
+    """
+    Code from https://scanpy-tutorials.readthedocs.io/en/latest/integrating-data-using-ingest.html
+    """
     #adata_ref = sc.datasets.pbmc3k_processed()
     # quick fix for broken dataset paths, should be removed with scanpy>=1.6.0
     adata_ref = sc.read(
