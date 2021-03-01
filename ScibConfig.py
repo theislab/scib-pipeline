@@ -1,5 +1,5 @@
 from pathlib import Path
-from snakemake.io import expand
+import snakemake.io
 from collections import defaultdict
 import itertools
 
@@ -68,12 +68,27 @@ class ParsedConfig:
             return value if isinstance(value, list) else [value]
         return value
 
-    def get_hvg(self, wildcards, output_pattern, **kwargs):
+    def get_hvg(
+            self,
+            wildcards: snakemake.io.Wildcards,
+            output_pattern: str = None,
+            **kwargs
+    ) -> str:
+        """
+        Get hvg parameter for integration run scripts
+        :param wildcards: wildcards passed by Snakemake containing at least 'hvg' key
+        :param output_pattern: file pattern with placeholders 'hvg'
+            Only needed for R integration methods to get path of separate HVG file
+            minimal example: 'output_dir/{hvg}.h5ad'
+        :param kwargs: additional wildcards that are not contained in output_pattern
+        :return: empty string for full-feature (n_hvg = 0), otherwise '-v <option>'
+            with <option> specific to python or R methods
+        """
         n_hvgs = self.get_feature_selection(wildcards.hvg)
         if n_hvgs == 0:
             return ""
-        if self.get_from_method(wildcards.method, "R"):
-            p = Path(expand(output_pattern, **wildcards, **kwargs)[0])
+        if output_pattern is not None:
+            p = Path(snakemake.io.expand(output_pattern, **wildcards, **kwargs)[0])
             hvg_path = (p.parent / f'{p.stem}_hvg').with_suffix(p.suffix)
             return f'-v "{hvg_path}"'
         return f"-v {n_hvgs}"
