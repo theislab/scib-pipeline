@@ -57,6 +57,6 @@ rule metrics:
     shell:
         """
         {params.cmd} scripts/metrics/merge_metrics.py -i {input.tables} \
-            -o {output} --root {cfg.ROOT}"
+            -o {output} --root {cfg.ROOT}
         """
 
