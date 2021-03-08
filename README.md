@@ -22,30 +22,35 @@ To install the envs, use
 ```bash
 conda env create -f FILENAME.yml
 ``` 
-To set the correct paths so that R the correct R libraries can be found, copy `env_vars_activate.sh` to `etc/conda/activate.d/`
-and `env_vars_deactivate.sh` to `etc/conda/deactivate.d/` to every environment.
 In the `scIB-R-integration` environment, R packages need to be installed manually.
 Activate the environment and install the packages `scran`, `Seurat` and `Conos` in R. `Conos` needs to be installed using R devtools.
 See [here](https://github.com/hms-dbmi/conos).
-Furthermore, to ensure that `rpy2` uses the correct R version, the `LD_LIBRARY_PATH` variable has to be set accordingly.
-First, determine the path of the environment using `rpy2`
+
+
+### Setting Environment Parameters
+Some parameters need to be added manually to the conda environment in order for packages to work correctly.
+For example, all environments using R need `LD_LIBRARY_PATH` set to the conda R library path.
+If that variable is not set, `rpy2` might reference the library path of a different R installation that might be on your system.
+
+Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to `etc/conda/activate.d/env_vars.sh`
+and `etc/conda/deactivate.d/env_vars.sh` respectively.
+Make sure to determine `$CONDA_PREFIX` in the activated environment first, then deactivate the environment before copying the files to prevent unwanted effects.
+
+e.g. for scIB-python:
+
+```console
+conda activate scIB-python
+echo $CONDA_PREFIX  # referred to as <conda_prefix>
+conda deactivate
+
+# copy activate variables
+cp envs/env_vars_activate.sh <conda_prefix>/etc/conda/activate.d/env_vars.sh
+# copy deactivate variables
+cp envs/env_vars_deactivate.sh <conda_prefix>/etc/conda/deactivate.d/env_vars.sh
 ```
-echo $CONDA_PREFIX
-```
-Then deactivate the environment to prevent unwanted effects.
-Next, set the `LD_LIBRARY_PATH` variable in the `${CONDA_PREFIX}/etc/conda/activate.d/activate-r-base.sh`
-```
-LD_LIBRARY_PATH_OLD=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH_OLD
-export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib/R/lib/"
-```
-and the following lines in `${CONDA_PREFIX}/etc/conda/deactivate.d/deactivate-r-base.sh`
-```
-LD_LIBRARY_PATH=LD_LIBRARY_PATH_OLD
-export LD_LIBRARY_PATH
-unset LD_LIBRARY_PATH_OLD
-```
-to restore the variable to its value prior to activating the environment.
+
+If necessary, create any missing directories manually.
+In case some lines in the environment scripts cause problems, you can edit the files to trouble-shoot.
 
 ## Running the Pipeline
 
