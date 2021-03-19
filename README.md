@@ -32,8 +32,7 @@ Some parameters need to be added manually to the conda environment in order for 
 For example, all environments using R need `LD_LIBRARY_PATH` set to the conda R library path.
 If that variable is not set, `rpy2` might reference the library path of a different R installation that might be on your system.
 
-Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to `etc/conda/activate.d/env_vars.sh`
-and `etc/conda/deactivate.d/env_vars.sh` respectively.
+Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to the designated locations of each conda environment.
 Make sure to determine `$CONDA_PREFIX` in the activated environment first, then deactivate the environment before copying the files to prevent unwanted effects.
 
 e.g. for scIB-python:
