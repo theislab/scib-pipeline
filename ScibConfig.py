@@ -1,18 +1,7 @@
 from pathlib import Path
-from snakemake.io import expand
+import snakemake.io
 from collections import defaultdict
 import itertools
-
-
-def as_list(x):
-    return x if isinstance(x, list) else [x]
-
-
-def join_path(*args):
-    path = Path(args[0])
-    for d in args[1:]:
-        path = path / d
-    return str(path)
 
 
 class ParsedConfig:
@@ -22,7 +11,7 @@ class ParsedConfig:
 
         # TODO: define and check schema of config
 
-        self.ROOT = Path(config["ROOT"])
+        self.ROOT = Path(config["ROOT"]).resolve()
         self.DATA_SCENARIOS = config["DATA_SCENARIOS"]
         self.SCALING = config["SCALING"]
         self.FEATURE_SELECTION = config["FEATURE_SELECTION"]
@@ -30,7 +19,6 @@ class ParsedConfig:
         self.timing = config["timing"]
         self.r_env = config["r_env"]
         self.py_env = config["py_env"]
-        self.conv_env = config["conv_env"]
         try:
             self.unintegrated_m = config["unintegrated_metrics"]
         except:
@@ -66,7 +54,7 @@ class ParsedConfig:
 
     def get_feature_selection(self, key):
         if key not in self.FEATURE_SELECTION:
-            raise ValueError(f"{key} not a valid key for scaling")
+            raise ValueError(f"{key} not a valid key for feature selection")
         return self.FEATURE_SELECTION[key]
 
     def get_from_method(self, method, key):
@@ -75,16 +63,33 @@ class ParsedConfig:
         if key not in self.METHODS[method]:
             return False
             # raise ValueError(f"{key} not a valid attribute of scenario {scenario}")
-        return self.METHODS[method][key]
+        value = self.METHODS[method][key]
+        if key == 'output_type':
+            return value if isinstance(value, list) else [value]
+        return value
 
-    def get_hvg(self, wildcards, adata_path):
+    def get_hvg(
+            self,
+            wildcards: snakemake.io.Wildcards,
+            output_pattern: str = None,
+            **kwargs
+    ) -> str:
+        """
+        Get hvg parameter for integration run scripts
+        :param wildcards: wildcards passed by Snakemake containing at least 'hvg' key
+        :param output_pattern: file pattern with placeholders 'hvg'
+            Only needed for R integration methods to get path of separate HVG file
+            minimal example: 'output_dir/{hvg}.h5ad'
+        :param kwargs: additional wildcards that are not contained in output_pattern
+        :return: empty string for full-feature (n_hvg = 0), otherwise '-v <option>'
+            with <option> specific to python or R methods
+        """
         n_hvgs = self.get_feature_selection(wildcards.hvg)
         if n_hvgs == 0:
             return ""
-        if self.get_from_method(wildcards.method, "R"):
-            path_parts = adata_path.split('.')
-            path_parts[-2] += '_hvg'
-            hvg_path = '.'.join(path_parts)
+        if output_pattern is not None:
+            p = Path(snakemake.io.expand(output_pattern, **wildcards, **kwargs)[0])
+            hvg_path = (p.parent / f'{p.stem}_hvg').with_suffix(p.suffix)
             return f'-v "{hvg_path}"'
         return f"-v {n_hvgs}"
 
@@ -111,6 +116,7 @@ class ParsedConfig:
         """
         TODO: include method subsetting
         Collect all wildcards for wildcard-dependent rule
+        :param methods: subset of methods, default: None, using all methods defined in config
         :param type_: if 'unintegrated', will treat differently than default
         :param output_types: output type or list of output types to be considered.
             If output_types==None, all output types are included.
@@ -128,8 +134,8 @@ class ParsedConfig:
         if output_types is True:
             output_types = ParsedConfig.OUTPUT_TYPES
         elif isinstance(output_types, list):
-            for ot_per_method in output_types:
-                if ot_per_method not in ParsedConfig.OUTPUT_TYPES:
+            for ot in output_types:
+                if ot not in ParsedConfig.OUTPUT_TYPES:
                     raise ValueError(f"{output_types} not a valid output type")
 
         if type_ == 'unintegrated':
@@ -144,7 +150,7 @@ class ParsedConfig:
             for method in methods:
                 scaling = self.SCALING.copy()
                 if self.get_from_method(method, "no_scale"):
-                    scaling.remove("scale")
+                    scaling = ['unscaled']
 
                 def reshape_wildcards(*lists):
                     cart_prod = itertools.product(*lists)
@@ -152,16 +158,17 @@ class ParsedConfig:
 
                 if isinstance(output_types, list):
                     # output type wildcard included
-                    ot_per_method = set(output_types).intersection(self.get_from_method(method, "output_type"))
-                    # [x for x in output_type if x in output_types]
-                    ot_per_method, method, scaling, scenarios, features = reshape_wildcards(
-                        ot_per_method,
+                    ot = set(output_types).intersection(self.get_from_method(method, "output_type"))
+                    if not ot:
+                        break  # skip if method output type is not defined in output_types
+                    ot, method, scaling, scenarios, features = reshape_wildcards(
+                        ot,
                         [method],
                         scaling,
                         self.get_all_scenarios(),
                         self.get_all_feature_selections()
                     )
-                    wildcards["o_type"].extend(ot_per_method)
+                    wildcards["o_type"].extend(ot)
                     wildcards["method"].extend(method)
                     wildcards["scaling"].extend(scaling)
                     wildcards["scenario"].extend(scenarios)
@@ -182,7 +189,7 @@ class ParsedConfig:
 
     def get_integrated_for_metrics(self, rules, method):
         if method == "unintegrated":
-            return Path(rules.integration_prepare.output).with_suffix(".h5ad")
+            return Path(rules.integration_prepare.output[0]).with_suffix(".h5ad")
         elif self.get_from_method(method, "R"):
             return rules.convert_RDS_h5ad.output
         else:

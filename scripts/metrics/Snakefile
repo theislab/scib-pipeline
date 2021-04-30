@@ -4,8 +4,7 @@
 rule metrics_single:
     input:
         u      = lambda w: cfg.get_from_scenario(w.scenario, key="file"),
-        i      = lambda w: cfg.get_integrated_for_metrics(rules, w.method),
-        script = "scripts/metrics/metrics.py"
+        i      = lambda w: cfg.get_integrated_for_metrics(rules, w.method)
     output: cfg.ROOT / "{scenario}/metrics/{scaling}/{hvg}/{method}_{o_type}.csv"
     message:
         """
@@ -21,9 +20,10 @@ rule metrics_single:
         cmd       = f"conda run -n {cfg.py_env} python"
     shell:
         """
-        {params.cmd} {input.script} -u {input.u} -i {input.i} -o {output} -m {wildcards.method} \
-        -b {params.batch_key} -l {params.label_key} --type {wildcards.o_type} \
-        --hvgs {params.hvgs} --organism {params.organism} --assay {params.assay} -v
+        {params.cmd} scripts/metrics/metrics.py -u {input.u} -i {input.i} \
+         -o {output} -m {wildcards.method} \
+         -b {params.batch_key} -l {params.label_key} --type {wildcards.o_type} \
+         --hvgs {params.hvgs} --organism {params.organism} --assay {params.assay} -v
         """
 
 
@@ -48,12 +48,15 @@ def all_metrics(wildcards):
 
 rule metrics:
     input:
-        tables = all_metrics,
-        script = f"scripts/metrics/merge_metrics.py"
+        tables = all_metrics
     output:
         cfg.ROOT / "metrics.csv"
     message: "Merge all metrics"
     params:
         cmd = f"conda run -n {cfg.py_env} python"
-    shell: "{params.cmd} {input.script} -i {input.tables} -o {output} --root {cfg.ROOT}"
+    shell:
+        """
+        {params.cmd} scripts/metrics/merge_metrics.py -i {input.tables} \
+            -o {output} --root {cfg.ROOT}
+        """
 

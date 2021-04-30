@@ -4,8 +4,7 @@
 # ------------------------------------------------------------------------------
 rule integration_run_python:
     input:
-        adata = lambda w: expand(rules.integration_prepare.output, **w, prep="h5ad"),
-        pyscript = "scripts/integration/runIntegration.py"
+        adata=expand(rules.integration_prepare.output, prep="h5ad", allow_missing=True)
     output:
         cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad"
     message:
@@ -16,22 +15,23 @@ rule integration_run_python:
         command: {params.cmd}
         hvgs: {params.hvgs}
         cell type option: {params.cell_type}
+        output: {output[0]}
         """
     params:
         batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
         cell_type = cfg.get_celltype_option_for_integration,
-        hvgs      = lambda wildcards, input: cfg.get_hvg(wildcards, input.adata[0]),
+        hvgs      = cfg.get_hvg,
         timing    = "-t" if cfg.timing else "",
         cmd       = f"conda run -n {cfg.py_env} python"
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad.benchmark")
     shell:
         """
-        {params.cmd} {input.pyscript} -i {input.adata} -o {output} \
+        {params.cmd} scripts/integration/runIntegration.py \
+          -i {input.adata} -o {output} \
 	      -b {params.batch_key} --method {wildcards.method} {params.hvgs} {params.cell_type} \
 	      {params.timing}
         """
-
 
 # ------------------------------------------------------------------------------
 # R specific integration rule.
@@ -39,13 +39,11 @@ rule integration_run_python:
 # ------------------------------------------------------------------------------
 rule integration_run_r:
     input:
-        adata  = lambda w: expand(rules.integration_prepare.output, **w, prep="RDS"),
-        rscript = "scripts/runMethods.R"
-    output:
-        cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS"
-        #cfg.get_filename_pattern("integration", "single", "rds")
+        adata=expand(rules.integration_prepare.output, prep="RDS", allow_missing=True)
+    output: cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS"
     message:
         """
+        output: {output[0]}
         Run {wildcards.method} on {wildcards.scaling} data
         feature selection: {wildcards.hvg}
         dataset: {wildcards.scenario}
@@ -53,15 +51,16 @@ rule integration_run_r:
         hvgs: {params.hvgs}
         """
     params:
-        batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
-        hvgs      = lambda wildcards, input: cfg.get_hvg(wildcards, input.adata[0]),
+        batch_key = lambda w: cfg.get_from_scenario(w.scenario, key="batch_key"),
+        hvgs      = lambda w: cfg.get_hvg(w, rules.integration_prepare.output, prep="RDS"),
         cmd       = f"conda run -n {cfg.r_env} Rscript",
         timing    = "-t" if cfg.timing else ""
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS.benchmark")
     shell:
         """
-        {params.cmd} {input.rscript} -i {input.adata} -o {output} -b {params.batch_key} \
+        {params.cmd} scripts/integration/runMethods.R -i {input.adata} \
+            -o {output} -b {params.batch_key} \
             --method {wildcards.method} {params.hvgs} {params.timing}
         """
 
@@ -72,8 +71,7 @@ rule integration_run_r:
 # ------------------------------------------------------------------------------
 rule convert_RDS_h5ad:
     input:
-        i = rules.integration_run_r.output,
-        script = "scripts/runPost.py"
+        i = rules.integration_run_r.output
     output:
         cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.h5ad"
     message:
@@ -81,14 +79,14 @@ rule convert_RDS_h5ad:
         Convert integrated data from {wildcards.method} into h5ad
         """
     params:
-        cmd = f"conda run -n {cfg.conv_env} python"
+        cmd = f"conda run -n {cfg.py_env} python"
     shell:
         """
         if [ {wildcards.method} == "conos" ]
         then
-            {params.cmd} {input.script} -i {input.i} -o {output} -c
+            {params.cmd} scripts/integration/runPost.py -i {input.i} -o {output} -c
         else
-            {params.cmd} {input.script} -i {input.i} -o {output}
+            {params.cmd} scripts/integration/runPost.py -i {input.i} -o {output}
         fi
         """
 

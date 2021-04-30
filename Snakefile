@@ -1,15 +1,16 @@
-from config.ScibConfig import *
+from ScibConfig import *
 
 #configfile: "config.yaml"
 cfg = ParsedConfig(config)
 wildcard_constraints:
-    hvg = "hvg|full_feature"
+    hvg="hvg|full_feature",
+    scaling="scaled|unscaled",
+    method="[^/]+"
 
 include: "scripts/preprocessing/Snakefile"
 include: "scripts/integration/Snakefile"
 include: "scripts/metrics/Snakefile"
 include: "scripts/visualization/Snakefile"
-include: "scripts/metrics/cc_score/Snakefile"
 
 rule all:
     input:

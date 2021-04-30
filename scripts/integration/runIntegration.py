@@ -73,7 +73,8 @@ if __name__=='__main__':
     }
     
     if method not in methods.keys():
-        raise ValueError('Method does not exist. Please use one of the following:\n'+str(list(methods.keys())))
+        raise ValueError(f'Method "{method}" does not exist. Please use one of '
+                         f'the following:\n{list(methods.keys())}')
     
     run= methods[method]
     runIntegration(file, out, run, hvg, batch, celltype)
