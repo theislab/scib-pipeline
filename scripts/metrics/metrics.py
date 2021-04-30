@@ -136,7 +136,6 @@ if __name__=='__main__':
     if (type_ == "embed"):
         n_hvgs = None
         embed = "X_emb"
-        precompute_pca = False
         # legacy check
         if ('emb' in adata_int.uns) and (adata_int.uns['emb']):
             adata_int.obsm["X_emb"] = adata_int.obsm["X_pca"].copy()
