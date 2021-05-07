@@ -1,0 +1,10 @@
+name: scib-pipeline
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python
+  - pip
+  - snakemake>=5
+  - pip:
+    - git+git://github.com/theislab/scib.git
