@@ -8,7 +8,22 @@ analysis of the different steps and combinations of preprocesssing and integrati
 
 ![Workflow](./figure.png)
 
+## Resources
+
+- On our [website](https://theislab.github.io/scib-reproducibility) we visualise the results of the study.
+
+- The scib package that is used in this pipeline can be found [here](https://github.com/theislab/scib).
+
+- For reproducibility and visualisation we have a dedicated repository: [scib-reproducibility](https://github.com/theislab/scib-reproducibility).
+
+### Please cite:
+
+_**Benchmarking atlas-level data integration in single-cell genomics.**  
+MD Luecken, M Büttner, K Chaichoompu, A Danese, M Interlandi, MF Mueller, DC Strobl, L Zappia, M Dugas, M Colomé-Tatché, FJ Theis
+bioRxiv 2020.05.22.111161; doi: https://doi.org/10.1101/2020.05.22.111161 _
+
 ## Installation
+
 To reproduce the results from this study, three different conda environments are needed.
 There are different environments for the python integration methods, the R integration methods and
 the conversion of R data types to anndata objects.
@@ -19,24 +34,15 @@ although it should be possible to run the pipeline using Mac OS.
 
 To create the conda environments use the `.yml` files in the `envs` directory.
 To install the envs, use
-```bash
+
+```console
 conda env create -f FILENAME.yml
-``` 
-In the `scIB-R-integration` environment, R packages need to be installed manually.
-Activate the environment and install the packages `scran`, `Seurat` and `Conos` in R. `Conos` needs to be installed using R devtools.
-See [here](https://github.com/hms-dbmi/conos).
-
-We used these versions of the R integration methods in our study:
-```
-harmony_1.0
-Seurat_3.2.0
-conos_1.3.0
-liger_0.5.0
-batchelor_1.4.0
 ```
 
+> Note: Instead of `conda` you can use `mamba` to speed up installation times
 
 ### Setting Environment Parameters
+
 Some parameters need to be added manually to the conda environment in order for packages to work correctly.
 For example, all environments using R need `LD_LIBRARY_PATH` set to the conda R library path.
 If that variable is not set, `rpy2` might reference the library path of a different R installation that might be on your system.
@@ -59,6 +65,57 @@ cp envs/env_vars_deactivate.sh <conda_prefix>/etc/conda/deactivate.d/env_vars.sh
 
 If necessary, create any missing directories manually.
 In case some lines in the environment scripts cause problems, you can edit the files to trouble-shoot.
+
+These operations are also automated in the `envs/set_vars.sh` script, which you can call via
+
+```console
+. envs/set_vars.sh <env-name>
+```
+
+### Python environments
+
+There are multiple different environments for the python dependencies:
+
+| YAML file location           | Environment name    | Description                                                                                           |
+| ---------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
+| `envs/scib-pipeline.yml`     | `scib-pipeline`     | Base environment for calling the pipeline, running python integration methods and computing metrics   |
+| `envs/scIB-python-paper.yml` | `scIB-python-paper` | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
+
+The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
+It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipelien will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env`, so that the dependencies of the paper are used instead for integration runs. 
+Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually. This also requires that environment variables are set as described above, so that R packages are correctly installed and located. Once environment variables have been set, you can install `kBET`:
+
+```console
+conda activate scib-pipeline
+Rscript -e "devtools::install_github('theislab/kBET')"
+```
+
+### R environments
+
+| YAML file location            | Environment name     | Description                                                                                           |
+| ----------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `envs/scIB-R-integration.yml` | `scIB-R-integration` | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
+| `envs/scib-R.yml`             | `scib-R`             | Updated environment with R dependencies                                                               |
+
+In the R environments, some R packages need to be installed manually.
+Activate the environment and install the packages all the R dependencies in R directly or use the script `install_R_methods.R`.
+
+```commandline
+conda activate <r environment>
+Rscript envs/install_R_methods.R
+```
+
+For the installation of`Conos`, please see [here](https://github.com/hms-dbmi/conos).
+
+We used these conda versions of the R integration methods in our study:
+
+```
+harmony_1.0
+Seurat_3.2.0
+conos_1.3.0
+liger_0.5.0
+batchelor_1.4.0
+```
 
 ## Running the Pipeline
 
@@ -98,17 +155,20 @@ where `N_CORES` defines the number of threads to use.
 More snakemake commands can be found in the [documentation](snakemake.readthedocs.io/).
 
 ### Visualise the Workflow
+
 A dependency graph of the workflow can be created anytime and is useful to gain a general understanding of the workflow.
 Snakemake can create a `graphviz` representation of the rules, which can be piped into an image file.
 
-```shell script
+```shell
 snakemake --configfile configs/test_data.yaml --rulegraph | dot -Tpng -Grankdir=TB > dependency.png
 ```
 
 ![Snakemake workflow](./dependency.png)
 
 ## Tools
+
 Tools that are compared include:
+
 - [Scanorama](https://github.com/brianhie/scanorama)
 - [scANVI](https://github.com/chenlingantelope/HarmonizationSCANVI)
 - [FastMNN](https://bioconductor.org/packages/batchelor/)

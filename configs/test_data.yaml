@@ -1,6 +1,6 @@
 ROOT: data
-r_env : scIB-R-integration
-py_env : scIB-python
+r_env : scib-R
+py_env : scib-pipeline
 
 timing: false
 unintegrated_metrics: false

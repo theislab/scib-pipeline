@@ -1,6 +1,6 @@
 ROOT: /storage/groups/ml01/projects/2020_scIB_malte.luecken
 r_env : scIB-R-integration
-py_env : scIB-python
+py_env : scIB-python-paper
 timing: false
 
 unintegrated_metrics: false
