@@ -2,17 +2,20 @@
 
 SCRIPT_DIR=$(dirname $0)
 
-if [ $# -eq 0 ]
-  then
-    echo "No arguments: Provide an existing conda environment name"
-    exit 1
+if [ $# -eq 0 ]; then
+  echo "No arguments: Provide the conda path of an existing conda environment"
+  exit 1
 fi
 
-ENV_NAME=$1
-conda activate ${ENV_NAME}
+CONDA_PREFIX=$1
+
+if [[ ! -d ${CONDA_PREFIX} ]]; then
+  echo "Path ${CONDA_PREFIX} is not a directory"
+  exit 1
+fi
+
 CONDA_DIR=${CONDA_PREFIX}/etc/conda
 R_HOME_TMP=${CONDA_PREFIX}/lib/R
-conda deactivate
 
 echo "cp activate_env_vars.sh ${CONDA_DIR}/activate.d/env_vars.sh"
 mkdir -p ${CONDA_DIR}/activate.d/

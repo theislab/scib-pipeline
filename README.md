@@ -69,7 +69,7 @@ In case some lines in the environment scripts cause problems, you can edit the f
 These operations are also automated in the `envs/set_vars.sh` script, which you can call via
 
 ```console
-. envs/set_vars.sh <env-name>
+. envs/set_vars.sh <conda_prefix>
 ```
 
 ### Python environments
