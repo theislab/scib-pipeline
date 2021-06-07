@@ -44,11 +44,11 @@ for (pckg_name in packages$package) {
   suppressPackageStartupMessages(library(pckg_name, character.only = TRUE))
 }
 
-# devtools::install_version('RcppAnnoy', version = '0.0.14', quiet = quiet)
-# BiocManager::install('batchelor', quiet = quiet)
-# devtools::install_version('Seurat', version = '3.2.0', quiet = quiet)
-# devtools::install_github('welch-lab/liger@v0.5.0', quiet = quiet)
-# devtools::install_github('kharchenkolab/conos@v1.3.0', quiet = quiet)
-# devtools::install_github('immunogenomics/harmony', quiet = quiet)
+devtools::install_version('RcppAnnoy', version = '0.0.14', quiet = quiet)
+BiocManager::install('batchelor', quiet = quiet)
+devtools::install_version('Seurat', version = '3.2.0', quiet = quiet)
+devtools::install_github('welch-lab/liger@v0.5.0', quiet = quiet)
+devtools::install_github('kharchenkolab/conos@v1.3.0', quiet = quiet)
+devtools::install_github('immunogenomics/harmony', quiet = quiet)
 
 sessionInfo()
