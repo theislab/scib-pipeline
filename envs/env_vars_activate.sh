@@ -21,3 +21,8 @@ export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib/R/lib/"
 QT_QPA_PLATFORM_OLD=$QT_QPA_PLATFORM
 export QT_QPA_PLATFORM_OLD
 export QT_QPA_PLATFORM='offscreen'
+
+# set R home path
+R_HOME_OLD=${R_HOME}
+export R_HOME_OLD
+R_HOME=${CONDA_PREFIX}/lib/R
