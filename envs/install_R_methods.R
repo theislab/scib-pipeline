@@ -23,8 +23,11 @@ for (pckg_name in packages$package) {
   how <- package_dt$how
 
   if (
-    !pckg_name %in% installed$Package || (!is.na(version)
-      && compareVersion(installed[Package == pckg_name, Version], version) < 0)
+    ! (pckg_name %in% installed$Package) ||
+      (
+        !is.na(version)
+        && compareVersion(installed[Package == pckg_name, Version], version) < 0
+      )
   ) {
 
     package <- package_dt$package
@@ -44,11 +47,11 @@ for (pckg_name in packages$package) {
   suppressPackageStartupMessages(library(pckg_name, character.only = TRUE))
 }
 
-devtools::install_version('RcppAnnoy', version = '0.0.14', quiet = quiet)
-BiocManager::install('batchelor', quiet = quiet)
-devtools::install_version('Seurat', version = '3.2.0', quiet = quiet)
-devtools::install_github('welch-lab/liger@v0.5.0', quiet = quiet)
-devtools::install_github('kharchenkolab/conos@v1.3.0', quiet = quiet)
-devtools::install_github('immunogenomics/harmony', quiet = quiet)
+# devtools::install_version('RcppAnnoy', version = '0.0.14', quiet = quiet)
+# BiocManager::install('batchelor', quiet = quiet)
+# devtools::install_version('Seurat', version = '3.2.0', quiet = quiet)
+# devtools::install_github('welch-lab/liger@v0.5.0', quiet = quiet)
+# devtools::install_github('kharchenkolab/conos@v1.3.0', quiet = quiet)
+# devtools::install_github('immunogenomics/harmony', quiet = quiet)
 
 sessionInfo()

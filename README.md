@@ -41,6 +41,10 @@ conda env create -f FILENAME.yml
 
 > Note: Instead of `conda` you can use `mamba` to speed up installation times
 
+For R environments, some dependencies need to be installed after the environment has been created.
+However, it is important to set environment variables for the conda environments first, to guarantee that the correct R version installs packages into the correct directories.
+All necessary steps are mentioned below.
+
 ### Setting Environment Parameters
 
 Some parameters need to be added manually to the conda environment in order for packages to work correctly.
@@ -49,6 +53,15 @@ If that variable is not set, `rpy2` might reference the library path of a differ
 
 Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to the designated locations of each conda environment.
 Make sure to determine `$CONDA_PREFIX` in the activated environment first, then deactivate the environment before copying the files to prevent unwanted effects.
+This process is automated with the following script, which you should call for each environment that uses R.
+
+```console
+. envs/set_vars.sh <conda_prefix>
+```
+
+After the script has successfully finished, you should be ready to use your new environment.
+
+If you want to set these and potentially other variables manually, proceed as follows.
 
 e.g. for scIB-python:
 
@@ -66,12 +79,6 @@ cp envs/env_vars_deactivate.sh <conda_prefix>/etc/conda/deactivate.d/env_vars.sh
 If necessary, create any missing directories manually.
 In case some lines in the environment scripts cause problems, you can edit the files to trouble-shoot.
 
-These operations are also automated in the `envs/set_vars.sh` script, which you can call via
-
-```console
-. envs/set_vars.sh <conda_prefix>
-```
-
 ### Python environments
 
 There are multiple different environments for the python dependencies:
@@ -82,7 +89,7 @@ There are multiple different environments for the python dependencies:
 | `envs/scIB-python-paper.yml` | `scIB-python-paper` | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
 
 The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
-It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipelien will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env`, so that the dependencies of the paper are used instead for integration runs. 
+It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to reproduce the results. 
 Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually. This also requires that environment variables are set as described above, so that R packages are correctly installed and located. Once environment variables have been set, you can install `kBET`:
 
 ```console
@@ -105,7 +112,7 @@ conda activate <r environment>
 Rscript envs/install_R_methods.R
 ```
 
-For the installation of`Conos`, please see [here](https://github.com/hms-dbmi/conos).
+For the installation of`Conos`, please see [the Conos github repo](https://github.com/hms-dbmi/conos).
 
 We used these conda versions of the R integration methods in our study:
 
