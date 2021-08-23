@@ -28,6 +28,12 @@ To reproduce the results from this study, three different conda environments are
 There are different environments for the python integration methods, the R integration methods and
 the conversion of R data types to anndata objects.
 
+The main steps are:
+
+1. Install the conda environment
+2. Set environment variables
+3. Install any extra packages through `R`
+
 For the installation of conda, follow [these](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) instructions
 or use your system's package manager. The environments have only been tested on linux operating systems
 although it should be possible to run the pipeline using Mac OS.
