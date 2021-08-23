@@ -51,7 +51,7 @@ For R environments, some dependencies need to be installed after the environment
 However, it is important to set environment variables for the conda environments first, to guarantee that the correct R version installs packages into the correct directories.
 All necessary steps are mentioned below.
 
-### Setting Environment Parameters
+### Setting Environment Variables
 
 Some parameters need to be added manually to the conda environment in order for packages to work correctly.
 For example, all environments using R need `LD_LIBRARY_PATH` set to the conda R library path.
@@ -96,9 +96,10 @@ There are multiple different environments for the python dependencies:
 
 The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
 It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to reproduce the results. 
+
 Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually. This also requires that environment variables are set as described above, so that R packages are correctly installed and located. Once environment variables have been set, you can install `kBET`:
 
-```console
+```commandline
 conda activate scib-pipeline
 Rscript -e "devtools::install_github('theislab/kBET')"
 ```
@@ -110,7 +111,7 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 | `envs/scIB-R-integration.yml` | `scIB-R-integration` | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
 | `envs/scib-R.yml`             | `scib-R`             | Updated environment with R dependencies                                                               |
 
-In the R environments, some R packages need to be installed manually.
+The R environments require extra R packages to be installed manually.
 Activate the environment and install the packages all the R dependencies in R directly or use the script `install_R_methods.R`.
 
 ```commandline
