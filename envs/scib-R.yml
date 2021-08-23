@@ -1,0 +1,23 @@
+name: scib-R
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - r-base=3.6.0
+  - r-essentials
+  - gsl
+  - r-optparse
+  - r-remotes
+  - r-devtools
+  - r-biocmanager
+  - r-cairo
+  # Seurat dependencies
+  - bioconductor-multtest
+  - r-sdmtools
+  # batchelor
+  - bioconductor-batchelor
+  # Liger dependencies
+  - openjdk
+  - r-hdf5r
+  - r-hmisc

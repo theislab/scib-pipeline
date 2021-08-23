@@ -1,9 +1,9 @@
-name: scIB-python
+name: scIB-python-paper
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python>=3.7
+  - python==3.7
   - numpy==1.18.1
   - pandas
   - seaborn
