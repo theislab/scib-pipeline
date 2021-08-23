@@ -100,7 +100,7 @@ It needs to be specified under the `py_env` key in the config files under `confi
 Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually. This also requires that environment variables are set as described above, so that R packages are correctly installed and located. Once environment variables have been set, you can install `kBET`:
 
 ```commandline
-conda activate scib-pipeline
+conda activate <py-environment>
 Rscript -e "devtools::install_github('theislab/kBET')"
 ```
 
@@ -115,7 +115,7 @@ The R environments require extra R packages to be installed manually.
 Activate the environment and install the packages all the R dependencies in R directly or use the script `install_R_methods.R`.
 
 ```commandline
-conda activate <r environment>
+conda activate <r-environment>
 Rscript envs/install_R_methods.R
 ```
 
