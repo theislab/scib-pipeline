@@ -16,6 +16,8 @@ analysis of the different steps and combinations of preprocesssing and integrati
 
 - For reproducibility and visualisation we have a dedicated repository: [scib-reproducibility](https://github.com/theislab/scib-reproducibility).
 
+- The data used in the study on  [figshare](https://figshare.com/articles/dataset/Benchmarking_atlas-level_data_integration_in_single-cell_genomics_-_integration_task_datasets_Immune_and_pancreas_/12420968)
+
 ### Please cite:
 
 _**Benchmarking atlas-level data integration in single-cell genomics.**  
