@@ -92,7 +92,7 @@ There are multiple different environments for the python dependencies:
 | YAML file location           | Environment name    | Description                                                                                           |
 | ---------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
 | `envs/scib-pipeline.yml`     | `scib-pipeline`     | Base environment for calling the pipeline, running python integration methods and computing metrics   |
-| `envs/scIB-python-paper.yml` | `scIB-python-paper` | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
+| `envs/scIB-python-paper.yml` | `scIB-python-paper` | Environment used for the results in the [publication](https://doi.org/10.1101/2020.05.22.111161) |
 
 The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
 It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to reproduce the results. 
