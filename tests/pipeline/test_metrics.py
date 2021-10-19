@@ -1,5 +1,5 @@
 from .test_pipeline import *
-from scIB.integration import *
+import scib
 
 import os
 import subprocess
@@ -10,14 +10,14 @@ def metrics_all_methods(adata_factory):
     adata = adata_factory()
 
     methods = {
-        'scanorama': runScanorama,
-        'trvae': runTrVae,
+        'scanorama': scib.ig.scanorama,
+        'trvae': scib.ig.trvae,
         'seurat': runSeurat,
         'harmony': runHarmony,
-        'mnn': runMNN,
-        'bbknn': runBBKNN,
+        'mnn': scib.ig.mnn,
+        'bbknn': scib.ig.bbknn,
         'conos': runConos,
-        'scvi': runScvi
+        'scvi': scib.ig.scvi
     }
     # for name, func in methods.items():
 
@@ -26,7 +26,7 @@ def test_all_metrics(adata_factory, test_metrics):
     adata = adata_factory()
     adata_int = adata.copy()
 
-    script = os.path.join(os.path.dirname(scIB.__file__), "scripts", "metrics.py")
+    script = os.path.join(os.path.dirname(scib.__file__), "scripts", "metrics.py")
 
     for ot in ["full", "embed", "knn"]:
         all_metrics(adata, adata_int, script=script, type_=ot, pipeline_dir=test_metrics, method="orig")

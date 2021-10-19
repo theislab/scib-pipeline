@@ -2,8 +2,9 @@
 # coding: utf-8
 
 import scanpy as sc
-import scIB
+import scib
 import warnings
+
 warnings.filterwarnings('ignore')
 
 
@@ -19,35 +20,42 @@ def runPP(inPath, outPath, hvg, batch, rout, scale, seurat):
     """
 
     adata = sc.read(inPath)
-    hvgs=adata.var.index
+    hvgs = adata.var.index
 
     # remove HVG if already precomputed
     if 'highly_variable' in adata.var:
         del adata.var['highly_variable']
-    
+
     if hvg > 500:
         print("Computing HVGs ...")
         if seurat:
-            hvgs= scIB.preprocessing.hvg_batch(adata,batch_key=batch, target_genes=hvg, adataOut=False)
+            hvgs = scib.preprocessing.hvg_batch(
+                adata,
+                batch_key=batch,
+                target_genes=hvg,
+                adataOut=False
+            )
         else:
-            adata = scIB.preprocessing.hvg_batch(adata,
-                                                batch_key=batch,
-                                                target_genes=hvg,
-                                                adataOut=True)
+            adata = scib.preprocessing.hvg_batch(
+                adata,
+                batch_key=batch,
+                target_genes=hvg,
+                adataOut=True
+            )
     if scale:
         print("Scaling data ...")
-        adata = scIB.preprocessing.scale_batch(adata, batch)
-        
+        adata = scib.preprocessing.scale_batch(adata, batch)
+
     if rout:
         print("Save as RDS")
-        scIB.preprocessing.saveSeurat(adata, outPath, batch, hvgs)
-        
+        scib.preprocessing.saveSeurat(adata, outPath, batch, hvgs)
+
     else:
         print("Save as HDF5")
         sc.write(outPath, adata)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Run the integration methods')
@@ -68,5 +76,5 @@ if __name__=='__main__':
     rout = args.rout
     seurat = args.seurat
     scale = args.scale
-    
+
     runPP(file, out, hvg, batch, rout, scale, seurat)

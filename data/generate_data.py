@@ -1,7 +1,8 @@
 import scanpy as sc
 import numpy as np
-import scIB
+import scib
 import warnings
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -25,7 +26,7 @@ def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
     sc.pp.filter_cells(adata, min_counts=1)
     sc.pp.filter_genes(adata, min_counts=1)
 
-    scIB.preprocessing.reduce_data(
+    scib.preprocessing.reduce_data(
         adata,
         pca=pca,
         n_top_genes=n_top_genes,
@@ -39,7 +40,7 @@ def get_adata_pbmc():
     """
     Code from https://scanpy-tutorials.readthedocs.io/en/latest/integrating-data-using-ingest.html
     """
-    #adata_ref = sc.datasets.pbmc3k_processed()
+    # adata_ref = sc.datasets.pbmc3k_processed()
     # quick fix for broken dataset paths, should be removed with scanpy>=1.6.0
     adata_ref = sc.read(
         "pbmc3k_processed.h5ad",

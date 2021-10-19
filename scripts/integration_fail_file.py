@@ -1,8 +1,7 @@
-
 from snakemake.io import load_configfile
 from pathlib import Path
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Create an empty output file for failed integration runs')
@@ -25,31 +24,30 @@ if __name__=='__main__':
 
     # Check inputs
     if method not in params['METHODS']:
-        raise ValueError(f'{method} is not a valid method.\n' 
+        raise ValueError(f'{method} is not a valid method.\n'
                          f'Please choose one of: {list(params["METHODS"].keys())}')
 
     if task not in params['DATA_SCENARIOS']:
-        raise ValueError(f'{task} is not a valid integration task.\n' 
+        raise ValueError(f'{task} is not a valid integration task.\n'
                          f'Please choose one of: {list(params["DATA_SCENARIOS"].keys())}')
-        
+
     # Get path values
     folder = params['ROOT']
     t_folder = task
     s_folder = 'scaled' if scale else 'unscaled'
     h_folder = 'hvg' if hvgs else 'full_feature'
     r_folder = 'R/' if 'R' in params['METHODS'][method] else ''
-    filename = method+'.h5ad'
+    filename = method + '.h5ad'
 
-    folder_path = '/'.join([folder,task,'integration',s_folder,h_folder])+'/'+r_folder
-    full_path = folder_path+filename
+    folder_path = '/'.join([folder, task, 'integration', s_folder, h_folder]) + '/' + r_folder
+    full_path = folder_path + filename
 
     if 'R' in params['METHODS'][method]:
-        filename_r = method+'.RDS'
-        full_path_r = folder_path+filename_r
+        filename_r = method + '.RDS'
+        full_path_r = folder_path + filename_r
         Path(full_path_r).touch()
-        Path(full_path_r+".benchmark").touch()
+        Path(full_path_r + ".benchmark").touch()
 
-    #print(full_path)
+    # print(full_path)
     Path(full_path).touch()
-    Path(full_path+".benchmark").touch()
-    
+    Path(full_path + ".benchmark").touch()
