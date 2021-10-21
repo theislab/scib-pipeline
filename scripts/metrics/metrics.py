@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     # batch_key might be overwritten, so we match it to the pre-integrated labels
     adata_int.obs[batch_key] = adata_int.obs[batch_key].astype('category')
-    if not np.array_equal(adata.obs[batch_key].cat.categories, adata_int.obs[batch_key].cat.categories):
+    if not np.array_equal(adata.obs[batch_key], adata_int.obs[batch_key]):
         # pandas uses the table index to match the correct labels
         adata_int.obs[batch_key] = adata.obs[batch_key]
         # print(adata.obs[batch_key].value_counts())
