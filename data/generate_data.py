@@ -1,6 +1,6 @@
 import scanpy as sc
 import numpy as np
-import scIB
+import scib
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -25,7 +25,7 @@ def get_adata_rand_batch(pca=False, n_top_genes=None, neighbors=False):
     sc.pp.filter_cells(adata, min_counts=1)
     sc.pp.filter_genes(adata, min_counts=1)
 
-    scIB.preprocessing.reduce_data(
+    scib.preprocessing.reduce_data(
         adata,
         pca=pca,
         n_top_genes=n_top_genes,
