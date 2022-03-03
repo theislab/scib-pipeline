@@ -4,12 +4,13 @@ from snakemake.io import load_configfile
 from pathlib import Path
 from os.path import isfile
 
+
 def touch_if_exists(file_path):
     if isfile(file_path):
         Path(file_path).touch()
     else:
         print(f'{file_path} does not exist.')
-        
+
 
 def update_timestamp_task(config, task, update_metrics=True):
     """
@@ -21,7 +22,7 @@ def update_timestamp_task(config, task, update_metrics=True):
     Note that this function does not update the timestamp of the aggregated metrics 
     files.
     """
-    
+
     base_folder = config['ROOT']
     scaling = config['SCALING']
     hvgs = list(config['FEATURE_SELECTION'].keys())
@@ -32,23 +33,23 @@ def update_timestamp_task(config, task, update_metrics=True):
 
     for scal in scaling:
         for feat in hvgs:
-            folder_path = '/'.join([base_folder,task,'prepare',scal,feat])+'/'
+            folder_path = '/'.join([base_folder, task, 'prepare', scal, feat]) + '/'
             file_base = 'adata_pre'
             for end in prep_endings:
-                filename = file_base+end
-                full_path = folder_path+filename
+                filename = file_base + end
+                full_path = folder_path + filename
                 touch_if_exists(full_path)
 
-            full_path = folder_path+'prep_h5ad.benchmark'
+            full_path = folder_path + 'prep_h5ad.benchmark'
             touch_if_exists(full_path)
 
-            full_path = folder_path+'prep_RDS.benchmark'
+            full_path = folder_path + 'prep_RDS.benchmark'
             touch_if_exists(full_path)
 
     # Integration & convert files
     for scal in scaling:
         for feat in hvgs:
-            folder_base = '/'.join([base_folder,task,'integration',scal,feat])+'/'
+            folder_base = '/'.join([base_folder, task, 'integration', scal, feat]) + '/'
             for method in methods:
                 if 'R' in config['METHODS'][method]:
                     r_folder = 'R/'
@@ -58,8 +59,8 @@ def update_timestamp_task(config, task, update_metrics=True):
                     method_endings = ['.h5ad', '.h5ad.benchmark']
 
                 for end in method_endings:
-                    folder_path = folder_base+r_folder
-                    full_path = folder_path+method+end
+                    folder_path = folder_base + r_folder
+                    full_path = folder_path + method + end
                     touch_if_exists(full_path)
 
     # Metrics files
@@ -68,30 +69,29 @@ def update_timestamp_task(config, task, update_metrics=True):
     if update_metrics:
         for scal in scaling:
             for feat in hvgs:
-                folder_base = '/'.join([base_folder,task,'metrics',scal,feat])+'/'
+                folder_base = '/'.join([base_folder, task, 'metrics', scal, feat]) + '/'
                 for method in methods:
                     out_types = config['METHODS'][method]['output_type']
                     if isinstance(out_types, str):
                         out_types = [out_types]
 
                     for out_type in out_types:
-                        file_base = '_'.join([method,out_type])
+                        file_base = '_'.join([method, out_type])
                         for end in metric_endings:
-                            full_path = folder_base+file_base+end
+                            full_path = folder_base + file_base + end
                             touch_if_exists(full_path)
-        
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Update timestamp on all output files'
-                                     ' for an integration task')
+                                                 ' for an integration task')
 
     parser.add_argument('-c', '--config', help='Snakemake config file', required=True)
-    parser.add_argument('-t', '--task', help='Integration task to update', 
+    parser.add_argument('-t', '--task', help='Integration task to update',
                         required=True)
-    parser.add_argument('-m', '--include-metrics', action='store_true', 
+    parser.add_argument('-m', '--include-metrics', action='store_true',
                         help='Also update timestamp of metrics files')
 
     args = parser.parse_args()
@@ -103,7 +103,7 @@ if __name__=='__main__':
     params = load_configfile(config)
 
     if task not in params['DATA_SCENARIOS']:
-        raise ValueError(f'{task} is not a valid integration task.\n' 
+        raise ValueError(f'{task} is not a valid integration task.\n'
                          'Please choose one of:\n'
                          f'{list(params["DATA_SCENARIOS"].keys())}')
 

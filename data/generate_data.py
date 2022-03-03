@@ -2,6 +2,7 @@ import scanpy as sc
 import numpy as np
 import scib
 import warnings
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -39,7 +40,7 @@ def get_adata_pbmc():
     """
     Code from https://scanpy-tutorials.readthedocs.io/en/latest/integrating-data-using-ingest.html
     """
-    #adata_ref = sc.datasets.pbmc3k_processed()
+    # adata_ref = sc.datasets.pbmc3k_processed()
     # quick fix for broken dataset paths, should be removed with scanpy>=1.6.0
     adata_ref = sc.read(
         "pbmc3k_processed.h5ad",

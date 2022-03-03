@@ -2,8 +2,9 @@
 # coding: utf-8
 
 import scanpy as sc
-import scIB
+import scib
 import warnings
+
 warnings.filterwarnings('ignore')
 
 
@@ -16,15 +17,14 @@ def runIntegration(inPath, outPath, method, hvg, batch, celltype=None):
     """
 
     adata = sc.read(inPath)
-    
+
     if timing:
         if celltype is not None:
-            integrated_tmp = scIB.metrics.measureTM(method, adata, batch, celltype)
+            integrated_tmp = scib.metrics.measureTM(method, adata, batch, celltype)
         else:
-            integrated_tmp = scIB.metrics.measureTM(method, adata, batch)            
+            integrated_tmp = scib.metrics.measureTM(method, adata, batch)
 
         integrated = integrated_tmp[2][0]
-
 
         integrated.uns['mem'] = integrated_tmp[0]
         integrated.uns['runtime'] = integrated_tmp[1]
@@ -34,10 +34,11 @@ def runIntegration(inPath, outPath, method, hvg, batch, celltype=None):
             integrated = method(adata, batch, celltype)
         else:
             integrated = method(adata, batch)
-                
+
     sc.write(outPath, integrated)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Run the integration methods')
@@ -59,22 +60,22 @@ if __name__=='__main__':
     celltype = args.celltype
     method = args.method
     methods = {
-        'scanorama': scIB.integration.runScanorama,
-        'trvae': scIB.integration.runTrVae,
-        'trvaep': scIB.integration.runTrVaep,
-        'scgen': scIB.integration.runScGen,
-        'mnn': scIB.integration.runMNN,
-        'bbknn': scIB.integration.runBBKNN,
-        'scvi': scIB.integration.runScvi,
-        'scanvi': scIB.integration.runScanvi,
-        'combat': scIB.integration.runCombat,
-        'saucie': scIB.integration.runSaucie,
-        'desc': scIB.integration.runDESC
+        'scanorama': scib.integration.scanorama,
+        'trvae': scib.integration.trvae,
+        'trvaep': scib.integration.trvaep,
+        'scgen': scib.integration.scgen,
+        'mnn': scib.integration.mnn,
+        'bbknn': scib.integration.bbknn,
+        'scvi': scib.integration.scvi,
+        'scanvi': scib.integration.scanvi,
+        'combat': scib.integration.combat,
+        'saucie': scib.integration.saucie,
+        'desc': scib.integration.desc
     }
-    
+
     if method not in methods.keys():
         raise ValueError(f'Method "{method}" does not exist. Please use one of '
                          f'the following:\n{list(methods.keys())}')
-    
-    run= methods[method]
+
+    run = methods[method]
     runIntegration(file, out, run, hvg, batch, celltype)

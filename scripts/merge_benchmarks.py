@@ -2,7 +2,7 @@ import pandas as pd
 import argparse
 import os
 
-if __name__=='__main__':
+if __name__ == '__main__':
     """
     Merge benchmark output for all scenarios, methods and settings
     """
@@ -13,7 +13,6 @@ if __name__=='__main__':
     parser.add_argument('-r', '--root', required=True,
                         help='root directory for scIB output')
     args = parser.parse_args()
-
 
     print("Searching for .benchmark files...")
     bench_files = []
@@ -43,4 +42,3 @@ if __name__=='__main__':
     results.to_csv(args.output, index_label='scenario')
 
     print("Done!")
-
