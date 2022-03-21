@@ -185,7 +185,7 @@ runFastMNN = function(sobj, batch) {
 
 	sce <- fastMNN(expr, batch = sobj@meta.data[[batch]])
 
-	sobj@assays$RNA <- CreateAssayObject(as(assay(sce, "reconstructed"), "dgCMatrix")
+	sobj@assays$RNA <- CreateAssayObject(as(assay(sce, "reconstructed"), "dgCMatrix"))
 	sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key='fastmnn_')
 
 	return(sobj)
