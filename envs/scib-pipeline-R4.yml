@@ -1,0 +1,36 @@
+name: scib-pipeline-R4
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python
+  - pip
+  - snakemake>=5
+  - networkx
+  - icu
+  - GraphViz
+  - igraph
+  - gsl
+  - openblas
+  - llvmlite
+  - libgcc-ng
+  - anndata2ri
+  - r-base=4
+  - r-essentials
+  - r-devtools
+  - r-stringi
+  - bioconductor-scater
+  - bioconductor-scran
+  # Methods
+  - scvi=0.6.7
+  - scanorama=1.7.0
+  - bbknn=1.3.9
+  - r-seurat
+  - pip:
+    - scib==1.0.1
+    - trvaep==0.1.0
+    - mnnpy==0.1.9.5
+    - scgen==1.1.5
+#    - trvae==1.1.2
+#    - desc==2.0.3
+#    - keras==2.2.4

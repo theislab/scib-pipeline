@@ -1,10 +1,9 @@
 ROOT: data
-
-r_env : scIB-R-integration
-py_env : scIB-python
+r_env : scib-R4
+py_env : scib-pipeline-R4
 
 timing: false
-unintegrated_metrics: true
+unintegrated_metrics: false
 
 FEATURE_SELECTION:
   #hvg: 2000
@@ -22,16 +21,16 @@ METHODS:
     output_type: full
   #desc:
   #  output_type: embed
-  #mnn:
-  #  output_type: full
+#  mnn:
+#    output_type: full
   #saucie:
   #  output_type:
   #    - full
   #    - embed
-  #scanorama:
-  #  output_type:
-  #    - embed
-  #   - full
+  scanorama:
+    output_type:
+      - embed
+      - full
   scanvi:
     output_type: embed
     no_scale: true
@@ -53,7 +52,7 @@ METHODS:
   #     - embed
   #     - full
 # R methods
-  #conos:
+  #conos: # temporary directory issue
   #  R: true
   #  output_type: knn
   fastmnn:
@@ -76,13 +75,7 @@ METHODS:
       output_type: full
 
 DATA_SCENARIOS:
-  test_data:
-    batch_key: batch
-    label_key: celltype
-    organism: mouse
-    assay: expression
-    file: data/adata_norm.h5ad
-  test_data_rep:
+  test_data_r4:
     batch_key: batch
     label_key: celltype
     organism: mouse

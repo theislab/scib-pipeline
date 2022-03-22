@@ -144,6 +144,7 @@ runHarm = function(sobj, batch) {
 
 runLiger = function(sobj, batch, hvg, k=20, res=0.4, small.clust.thresh=20) {
     require(liger)
+    require(rliger)
     require(Seurat)
 
     # Only counts is converted to liger object. To pass our own normalized data,
@@ -179,14 +180,30 @@ runLiger = function(sobj, batch, hvg, k=20, res=0.4, small.clust.thresh=20) {
 }
 
 runFastMNN = function(sobj, batch) {
-	require(batchelor)
+  suppressPackageStartupMessages({
+    require(batchelor)
+  })
 
-	expr <- sobj@assays$RNA@data
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    expr <- GetAssayData(sobj, slot = "data")
+  } else {
+    # Seurat v3
+    expr <- sobj@assays$RNA@data
+  }
 
-	sce <- fastMNN(expr, batch = sobj@meta.data[[batch]])
+  sce <- fastMNN(expr, batch = sobj@meta.data[[batch]])
+  corrected_data <- assay(sce, "reconstructed")
 
-	sobj@assays$RNA <- CreateAssayObject(assay(sce, "reconstructed"))
-	sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key='fastmnn_')
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4m
+    sobj <- SetAssayData(sobj, slot = "data", new.data = as.matrix(corrected_data))
+    sobj@reductions[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key = 'fastmnn_')
+  } else {
+    # Seurat v3
+    sobj@assays$RNA <- CreateAssayObject(corrected_data)
+    sobj[['X_emb']] <- CreateDimReducObject(reducedDi(sce, "corrected"), key = 'fastmnn_')
+  }
 
-	return(sobj)
+  return(sobj)
 }
