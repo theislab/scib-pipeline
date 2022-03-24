@@ -16,12 +16,18 @@ jobs:
       with:
         environment-file: envs/scib-pipeline.yml
         environment-name: scib-pipeline
-        
+    
     - name: Setup R environment with micromamba
-      uses: mamba-org/provision-with-micromamba@v10
-      with:
-        environment-file: envs/scib-R.yml
-        environment-name: scib-R
+      shell: bash -l {0}
+      run: |
+        cat envs/scib-R.yml
+        micromamba env create -f envs/scib-R.yml
+    
+    #- name: Setup R environment with micromamba
+    #  uses: mamba-org/provision-with-micromamba@v10
+    #  with:
+    #    environment-file: envs/scib-R.yml
+    #    environment-name: scib-R
 
     - name: Check micromamba install
       shell: bash -l {0}
