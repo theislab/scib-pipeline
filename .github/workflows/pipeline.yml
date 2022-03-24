@@ -1,0 +1,58 @@
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on: [push]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup environment with micromamba
+      uses: mamba-org/provision-with-micromamba@v10
+
+    - name: Check micromamba install
+      shell: bash -l {0}
+      run: |
+        micromamba --version
+        micromamba env list
+        
+    - name: Setup environments
+      shell: bash -l {0}
+      run: |
+        micromamba env create -f envs/scib-pipeline.yml
+        micromamba env create -f envs/scib-R.yml
+        
+        # set environment variables
+        for env in 'scib-pipeline' 'scib-R'
+        do
+          micromamba activate $env
+          
+          # list environment packages while active
+          echo $env
+          micromamba env list
+          
+          # get $CONDA_PREFIX
+          conda_prefix=$CONDA_PREFIX
+          micromamba deactivate
+          
+          # set variables
+          bash ./envs/set_vars.sh conda_prefix
+        done
+    
+    - name: Generate data
+      shell: bash -l {0}
+      run: |
+        micromamba activate scib-pipeline
+        python data/generate_data.py
+    
+    - name: Run pipeline
+      shell: bash -l {0}
+      run: |
+        micromamba activate scib-pipeline
+        snakemake --configfile configs/test_data.yaml -n
+        snakemake --configfile configs/test_data.yaml -kc
+        snakemake --configfile configs/test_data.yaml -kc1
