@@ -42,7 +42,10 @@ For the installation of conda, follow [these](https://conda.io/projects/conda/en
 instructions or use your system's package manager. The environments have only been tested on linux operating systems
 although it should be possible to run the pipeline using Mac OS.
 
-To create the conda environments use the `.yml` files in the `envs` directory. To install the envs, use
+To create the conda environments use the `.yml` files in the `envs` directory.
+In order for the pipeline to work out of the box, you need a python and an R environment.
+The different environments are explained below.
+The general command to install them is:
 
 ```console
 conda env create -f FILENAME.yml
@@ -76,7 +79,7 @@ If you want to set these and potentially other variables manually, proceed as fo
 e.g. for scIB-python:
 
 ```console
-conda activate scIB-python
+conda activate scib-pipeline
 echo $CONDA_PREFIX  # referred to as <conda_prefix>
 conda deactivate
 
