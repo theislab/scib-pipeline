@@ -17,11 +17,12 @@ dependencies:
   - r-sdmtools
   - r-stringi
   - r-metap
-  - r-seurat
+  - r-seurat=3
+  - r-spatstat=1.64
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
-  - r-liger
+  - r-liger=0.5.0
   - openjdk
   - r-hdf5r
   - r-hmisc
