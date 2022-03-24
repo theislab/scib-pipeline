@@ -11,8 +11,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Setup environment with micromamba
+    - name: Setup python environment with micromamba
       uses: mamba-org/provision-with-micromamba@v10
+      with:
+        environment-file: envs/scib-pipeline.yml
+        environment-name: scib-pipeline
+        
+    - name: Setup R environment with micromamba
+      uses: mamba-org/provision-with-micromamba@v10
+      with:
+        environment-file: envs/scib-R.yml
+        environment-name: scib-R
 
     - name: Check micromamba install
       shell: bash -l {0}
@@ -20,25 +29,18 @@ jobs:
         micromamba --version
         micromamba env list
         
-    - name: Setup environments
+    - name: Setup environment variables
       shell: bash -l {0}
       run: |
-        micromamba env create -f envs/scib-pipeline.yml
-        micromamba env create -f envs/scib-R.yml
-        
-        # set environment variables
         for env in 'scib-pipeline' 'scib-R'
         do
           micromamba activate $env
-          
           # list environment packages while active
           echo $env
-          micromamba env list
-          
+          micromamba list
           # get $CONDA_PREFIX
           conda_prefix=$CONDA_PREFIX
           micromamba deactivate
-          
           # set variables
           bash ./envs/set_vars.sh conda_prefix
         done
