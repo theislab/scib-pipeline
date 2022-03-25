@@ -17,7 +17,7 @@ jobs:
     #    environment-file: envs/scib-pipeline.yml
     #    environment-name: scib-pipeline
     
-    - name: Setup environments and run pipeline with mambaforge
+    - name: Setup environments
       uses: addnab/docker-run-action@v3
       with:
         image: condaforge/mambaforge:latest
@@ -26,33 +26,46 @@ jobs:
           mamba --version
           cd workspace
           ls -la
-          
+          conda init bash
+          conda activate
 
-          # Create environments
           cat envs/scib-pipeline.yml
-          mamba env create -f envs/scib-pipeline.yml
+          # mamba env create -f envs/scib-pipeline.yml
+          
           cat envs/scib-R.yml
-          mamba env create -f envs/scib-R.yml
+          # mamba env create -f envs/scib-R.yml
+          
           mamba env list
 
           # Set environment variables
-          for env in 'scib-pipeline' 'scib-R'
-          do
-            conda activate $env
-            # list environment packages while active
-            echo $env
-            mamba list
-            # get $CONDA_PREFIX
-            conda_prefix=$CONDA_PREFIX
-            conda deactivate
-            # set variables
-            bash ./envs/set_vars.sh conda_prefix
-          done
-          
-          # Generate data
+          #for env in 'scib-pipeline' 'scib-R'
+          #do
+          #  conda activate $env
+          #  # list environment packages while active
+          #  echo $env
+          #  mamba list
+          #  # get $CONDA_PREFIX
+          #  conda_prefix=$CONDA_PREFIX
+          #  conda deactivate
+          #  # set variables
+          #  bash ./envs/set_vars.sh conda_prefix
+          #done
+
+    - name: Generate data
+      uses: addnab/docker-run-action@v3
+      with:
+        image: condaforge/mambaforge:latest
+        options: -v ${{ github.workspace }}:/workspace
+        run: |
           conda activate scib-pipeline
           python data/generate_data.py
 
+    - name: Run pipeline with mambaforge
+      uses: addnab/docker-run-action@v3
+      with:
+        image: condaforge/mambaforge:latest
+        options: -v ${{ github.workspace }}:/workspace
+        run: |
           # Run pipeline
           snakemake --configfile configs/test_data.yaml -n
           snakemake --configfile configs/test_data.yaml -kc
