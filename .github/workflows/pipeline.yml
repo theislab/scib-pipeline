@@ -41,11 +41,12 @@ jobs:
         for env in 'scib-pipeline' 'scib-R'
         do
           cat envs/$env.yml
-          mamba env create -f envs/$env.yml
+          mamba env create -qf envs/$env.yml
 
           # set environment variables
           conda activate $env
           prefix=$CONDA_PREFIX
+          mamba list
           conda deactivate
           echo $prefix
           bash ./envs/set_vars.sh $prefix
@@ -59,11 +60,10 @@ jobs:
         conda activate scib-pipeline
         python data/generate_data.py
 
-    - name: Run pipeline with mambaforge
+    - name: Run pipeline
       shell: bash -l {0}
       run: |
         # Run pipeline
         conda activate scib-pipeline
-        snakemake --configfile configs/test_data.yaml -n
         snakemake --configfile configs/test_data.yaml -kc
         snakemake --configfile configs/test_data.yaml -kc1
