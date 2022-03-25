@@ -41,7 +41,7 @@ jobs:
         for env in 'scib-pipeline' 'scib-R'
         do
           cat envs/$env.yml
-          mamba env create -qf envs/$env.yml
+          mamba env create -f envs/$env.yml
 
           # set environment variables
           conda activate $env
@@ -63,6 +63,7 @@ jobs:
       shell: bash -l {0}
       run: |
         # Run pipeline
+        conda activate scib-pipeline
         snakemake --configfile configs/test_data.yaml -n
         snakemake --configfile configs/test_data.yaml -kc
         snakemake --configfile configs/test_data.yaml -kc1
