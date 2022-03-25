@@ -11,56 +11,45 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Setup python environment with micromamba
-      uses: mamba-org/provision-with-micromamba@v10
-      with:
-        environment-file: envs/scib-pipeline.yml
-        environment-name: scib-pipeline
-    
-    - name: Setup R environment with micromamba
-      shell: bash -l {0}
-      run: |
-        cat envs/scib-R.yml
-        micromamba env create -f envs/scib-R.yml
-    
-    #- name: Setup R environment with micromamba
+    #- name: Setup python environment with micromamba
     #  uses: mamba-org/provision-with-micromamba@v10
     #  with:
-    #    environment-file: envs/scib-R.yml
-    #    environment-name: scib-R
+    #    environment-file: envs/scib-pipeline.yml
+    #    environment-name: scib-pipeline
+    
+    - name: Setup environments and run pipeline with mambaforge
+      uses: addnab/docker-run-action@v3
+      with:
+        image: condaforge/mambaforge:latest
+        options: -v ${{ github.workspace }}:/workspace
+        run: |
+          mamba --version
 
-    - name: Check micromamba install
-      shell: bash -l {0}
-      run: |
-        micromamba --version
-        micromamba env list
-        
-    - name: Setup environment variables
-      shell: bash -l {0}
-      run: |
-        for env in 'scib-pipeline' 'scib-R'
-        do
-          micromamba activate $env
-          # list environment packages while active
-          echo $env
-          micromamba list
-          # get $CONDA_PREFIX
-          conda_prefix=$CONDA_PREFIX
-          micromamba deactivate
-          # set variables
-          bash ./envs/set_vars.sh conda_prefix
-        done
-    
-    - name: Generate data
-      shell: bash -l {0}
-      run: |
-        micromamba activate scib-pipeline
-        python data/generate_data.py
-    
-    - name: Run pipeline
-      shell: bash -l {0}
-      run: |
-        micromamba activate scib-pipeline
-        snakemake --configfile configs/test_data.yaml -n
-        snakemake --configfile configs/test_data.yaml -kc
-        snakemake --configfile configs/test_data.yaml -kc1
+          cat envs/scib-pipeline.yml
+          mamba env create -f envs/scib-pipeline.yml
+          
+          cat envs/scib-R.yml
+          mamba env create -f envs/scib-R.yml
+
+          for env in 'scib-pipeline' 'scib-R'
+          do
+            mamba activate $env
+            # list environment packages while active
+            echo $env
+            mamba list
+            # get $CONDA_PREFIX
+            conda_prefix=$CONDA_PREFIX
+            mamba deactivate
+            # set variables
+            bash ./envs/set_vars.sh conda_prefix
+          done
+          
+          # Generate data
+          mamba activate scib-pipeline
+          python data/generate_data.py
+
+          # Run pipeline
+          mamba activate scib-pipeline
+          snakemake --configfile configs/test_data.yaml -n
+          snakemake --configfile configs/test_data.yaml -kc
+          snakemake --configfile configs/test_data.yaml -kc1
