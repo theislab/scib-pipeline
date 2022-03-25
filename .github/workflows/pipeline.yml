@@ -38,25 +38,20 @@ jobs:
     - name: Setup environments
       shell: bash -l {0}
       run: |
-        cat envs/scib-pipeline.yml
-        mamba env create -f envs/scib-pipeline.yml
-          
-        cat envs/scib-R.yml
-        mamba env create -f envs/scib-R.yml
-          
-        mamba env list
-
         for env in 'scib-pipeline' 'scib-R'
         do
+          cat envs/$env.yml
+          mamba env create -qf envs/$env.yml
+
+          # set environment variables
           conda activate $env
-          echo $env
-          mamba list
-
-          conda_prefix=$CONDA_PREFIX
+          prefix=$CONDA_PREFIX
           conda deactivate
-
-          bash ./envs/set_vars.sh conda_prefix
+          echo $prefix
+          bash ./envs/set_vars.sh $prefix
         done
+
+        mamba env list
 
     - name: Generate data
       shell: bash -l {0}
