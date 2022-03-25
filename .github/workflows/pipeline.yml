@@ -24,32 +24,36 @@ jobs:
         options: -v ${{ github.workspace }}:/workspace
         run: |
           mamba --version
+          pwd
+          ls -la
+          
 
+          # Create environments
           cat envs/scib-pipeline.yml
           mamba env create -f envs/scib-pipeline.yml
-          
           cat envs/scib-R.yml
           mamba env create -f envs/scib-R.yml
+          mamba env list
 
+          # Set environment variables
           for env in 'scib-pipeline' 'scib-R'
           do
-            mamba activate $env
+            conda activate $env
             # list environment packages while active
             echo $env
             mamba list
             # get $CONDA_PREFIX
             conda_prefix=$CONDA_PREFIX
-            mamba deactivate
+            conda deactivate
             # set variables
             bash ./envs/set_vars.sh conda_prefix
           done
           
           # Generate data
-          mamba activate scib-pipeline
+          conda activate scib-pipeline
           python data/generate_data.py
 
           # Run pipeline
-          mamba activate scib-pipeline
           snakemake --configfile configs/test_data.yaml -n
           snakemake --configfile configs/test_data.yaml -kc
           snakemake --configfile configs/test_data.yaml -kc1
