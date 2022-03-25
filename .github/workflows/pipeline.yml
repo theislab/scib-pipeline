@@ -24,62 +24,49 @@ jobs:
     
     - uses: conda-incubator/setup-miniconda@v2
       with:
-        python-version: 3.7
         mamba-version: "*"
-        channels: conda-forge,bioconda
-        channel-priority: true
-        activate-environment: scib-pipeline
-        environment-file: envs/scib-pipeline.yml
+        auto-activate-base: true
+        activate-environment: ""
     
     - shell: bash -l {0}
       run: |
         mamba --version
         ls -la
         mamba list
-        
-        mamba create -n test
-        mamba create -n test2
-        mamba env list
-        conda activate test
 
+    - name: Setup environments
+      shell: bash -l {0}
+      run: |
         cat envs/scib-pipeline.yml
-        # mamba env create -f envs/scib-pipeline.yml
+        mamba env create -f envs/scib-pipeline.yml
           
         cat envs/scib-R.yml
-        # mamba env create -f envs/scib-R.yml
+        mamba env create -f envs/scib-R.yml
           
         mamba env list
 
-        # Set environment variables
-        #for env in 'scib-pipeline' 'scib-R'
-        #do
-        #  conda activate $env
-        #  # list environment packages while active
-        #  echo $env
-        #  mamba list
-        #  # get $CONDA_PREFIX
-        #  conda_prefix=$CONDA_PREFIX
-        #  conda deactivate
-        #  # set variables
-        #  bash ./envs/set_vars.sh conda_prefix
-        #done
+        for env in 'scib-pipeline' 'scib-R'
+        do
+          conda activate $env
+          echo $env
+          mamba list
+
+          conda_prefix=$CONDA_PREFIX
+          conda deactivate
+
+          bash ./envs/set_vars.sh conda_prefix
+        done
 
     - name: Generate data
-      uses: addnab/docker-run-action@v3
-      with:
-        image: condaforge/mambaforge:latest
-        options: -v ${{ github.workspace }}:/workspace
-        run: |
-          conda activate scib-pipeline
-          python data/generate_data.py
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline
+        python data/generate_data.py
 
     - name: Run pipeline with mambaforge
-      uses: addnab/docker-run-action@v3
-      with:
-        image: condaforge/mambaforge:latest
-        options: -v ${{ github.workspace }}:/workspace
-        run: |
-          # Run pipeline
-          snakemake --configfile configs/test_data.yaml -n
-          snakemake --configfile configs/test_data.yaml -kc
-          snakemake --configfile configs/test_data.yaml -kc1
+      shell: bash -l {0}
+      run: |
+        # Run pipeline
+        snakemake --configfile configs/test_data.yaml -n
+        snakemake --configfile configs/test_data.yaml -kc
+        snakemake --configfile configs/test_data.yaml -kc1
