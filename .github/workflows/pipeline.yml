@@ -24,7 +24,7 @@ jobs:
         options: -v ${{ github.workspace }}:/workspace
         run: |
           mamba --version
-          pwd
+          cd workspace
           ls -la
           
 
