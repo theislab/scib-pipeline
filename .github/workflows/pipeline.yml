@@ -26,7 +26,11 @@ jobs:
           mamba --version
           cd workspace
           ls -la
+          cat ~/.bashrc
           conda init bash
+          cat ~/.bashrc
+          bash
+          cat ~/.bashrc
           conda activate
 
           cat envs/scib-pipeline.yml
@@ -57,6 +61,7 @@ jobs:
         image: condaforge/mambaforge:latest
         options: -v ${{ github.workspace }}:/workspace
         run: |
+          cat ~/.bashrc
           conda activate scib-pipeline
           python data/generate_data.py
 
