@@ -16,7 +16,7 @@ dependencies:
   - libgcc-ng
   - numba<=0.46  # for mnnpy
   - anndata2ri
-  - r-base
+  - r-base=3.6
   - r-essentials
   - r-devtools
   - r-stringi

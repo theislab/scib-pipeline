@@ -4,7 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.8
-  - r-base>=4
+  - r-base=4.0
   - r-essentials
   - gsl
   - r-optparse
