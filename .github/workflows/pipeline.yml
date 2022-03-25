@@ -17,17 +17,25 @@ jobs:
     #    environment-file: envs/scib-pipeline.yml
     #    environment-name: scib-pipeline
 
-    - uses: addnab/docker-run-action@v3
+    #- uses: addnab/docker-run-action@v3
+    #  with:
+    #    image: condaforge/mambaforge:latest
+    #    options: -v ${{ github.workspace }}:/workspace
+    
+    - uses: conda-incubator/setup-miniconda@v2
       with:
-        image: condaforge/mambaforge:latest
-        options: -v ${{ github.workspace }}:/workspace
+        python-version: 3.7
+        mamba-version: "*"
+        channels: conda-forge,bioconda
+        channel-priority: true
+        activate-environment: scib-pipeline
+        environment-file: envs/scib-pipeline.yml
     
     - shell: bash -l {0}
       run: |
         mamba --version
-        cd workspace
         ls -la
-        conda activate base
+        mamba list
         
         mamba create -n test
         mamba create -n test2
