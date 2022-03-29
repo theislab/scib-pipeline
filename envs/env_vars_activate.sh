@@ -26,3 +26,8 @@ export QT_QPA_PLATFORM='offscreen'
 R_HOME_OLD=${R_HOME}
 export R_HOME_OLD
 export R_HOME=${CONDA_PREFIX}/lib/R
+
+# unset system R libs
+R_LIBS_OLD=$R_LIBS
+export R_LIBS_OLD
+export R_LIBS=""
