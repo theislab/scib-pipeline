@@ -99,7 +99,19 @@ There are multiple different environments for the python dependencies:
 The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
 It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it for running python methods. Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to reproduce the results. 
 
-Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually. This also requires that environment variables are set as described above, so that R packages are correctly installed and located. Once environment variables have been set, you can install `kBET`:
+Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be installed manually.
+Make sure that the environment variables are set as described above, so that R packages are correctly installed and 
+located by `rpy2`.
+For example, when working with `scib-pipeline`, call
+
+```console
+conda activate scib-pipeline
+conda_prefix=$CONDA_PREFIX
+conda deactivate
+. envs/set_vars.sh $conda_prefix
+```
+
+Once environment variables have been set, you can install `kBET`:
 
 ```commandline
 conda activate <py-environment>
@@ -114,6 +126,15 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 | `envs/scib-R.yml`             | `scib-R`             | Updated environment with R dependencies                                                               |
 
 The R environments require extra R packages to be installed manually.
+Don't forget to set the environment variables before installing anything through R. e.g. for `scib-R`:
+
+```console
+conda activate scib-R
+conda_prefix=$CONDA_PREFIX
+conda deactivate
+. envs/set_vars.sh $conda_prefix
+```
+
 Activate the environment and install the packages all the R dependencies in R directly or use the script `install_R_methods.R`.
 
 ```commandline
