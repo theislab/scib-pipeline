@@ -109,7 +109,7 @@ for running python methods.
 Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to
 reproduce the results.
 
-Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be
+Furthermore, the python environments additionally require the R package [`kBET`](https://github.com/theislab/kBET) to be
 installed manually.
 Make sure that the environment variables are set as described above, so that R packages are correctly installed and 
 located by `rpy2`.
