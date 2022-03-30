@@ -111,8 +111,17 @@ reproduce the results.
 
 Furthermore, `scib-pipeline` python environments require the R package [`kBET`](https://github.com/theislab/kBET) to be
 installed manually.
-This also requires that environment variables are set as described above, so that R packages are correctly installed and
-located.
+Make sure that the environment variables are set as described above, so that R packages are correctly installed and 
+located by `rpy2`.
+For example, when working with `scib-pipeline`, call
+
+```console
+conda activate scib-pipeline
+conda_prefix=$CONDA_PREFIX
+conda deactivate
+. envs/set_vars.sh $conda_prefix
+```
+
 Once environment variables have been set, you can install `kBET`:
 
 ```commandline
@@ -129,10 +138,19 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 | `envs/scib-R.yml`             | `scib-R4`            | 'envs/r4_dependencies.tsv'  | More up to date environment with R 4 dependencies                                                     |
 
 Depending on the R environment used, some R packages must be additionally installed in R instead of conda.
-For convenience, we provide the `envs/install_R_methods.R` scripts that installs the necessary dependencies through R
-directly.
-Activate the R environment you plan on using and call the script as follows, with the correct R dependency file for your
-environment.
+For convenience, we provide the `envs/install_R_methods.R` scripts that installs the necessary dependencies
+through R directly.
+Don't forget to set the environment variables before installing anything through R. e.g. for `scib-R`:
+
+```console
+conda activate scib-R
+conda_prefix=$CONDA_PREFIX
+conda deactivate
+. envs/set_vars.sh $conda_prefix
+```
+
+Activate the R environment you plan on using and call the script as follows, with the correct R dependency
+file for your environment (see table above).
 
 ```
 conda activate <r environment>
