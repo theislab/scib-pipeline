@@ -21,3 +21,8 @@ unset QT_QPA_PLATFORM_OLD
 R_HOME=${R_HOME_OLD}
 export R_HOME
 unset R_HOME_OLD
+
+# Reset R libs
+R_LIBS=$R_LIBS_OLD
+export $R_LIBS
+unset R_LIBS_OLD
