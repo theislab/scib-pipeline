@@ -15,6 +15,7 @@ dependencies:
   - llvmlite
   - libgcc-ng
   - numba<=0.46  # for mnnpy
+  - rpy2<=3.4.2
   - anndata2ri
   - r-base
   - r-essentials
