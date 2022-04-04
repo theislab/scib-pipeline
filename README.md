@@ -134,7 +134,7 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 | YAML file location            | Environment name     | R dependency file           | Description                                                                                           |
 |-------------------------------|----------------------|-----------------------------|-------------------------------------------------------------------------------------------------------|
 | `envs/scIB-R-integration.yml` | `scIB-R-integration` | 'envs/r36_dependencies.tsv' | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
-| `envs/scib-R.yml`             | `scib-R`             | 'envs/r36_dependencies.tsv' | More up to date environment with R 3.6 dependencies                                                   |                               |                      |                             |                                                                                                      |
+| `envs/scib-R.yml`             | `scib-R`             | 'envs/r36_dependencies.tsv' | More up to date environment with R 3.6 dependencies                                                   |
 | `envs/scib-R4.yml`            | `scib-R4`            | 'envs/r4_dependencies.tsv'  | More up to date environment with R 4 dependencies                                                     |
 
 Depending on the R environment used, some R packages must be additionally installed in R instead of conda.
