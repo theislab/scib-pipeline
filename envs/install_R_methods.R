@@ -1,20 +1,25 @@
 # Title     : Install all R integration methods
 # Created by: mumichae
 # Created on: 6/4/21
-suppressPackageStartupMessages(library(data.table))
 
+args <- commandArgs(trailingOnly = TRUE)
+
+if (length(args) == 1) {
+  r_dep_file <- args
+  message('R dependencies from ', r_dep_file)
+} else {
+  stop('Please provide a R dependency file')
+}
+
+suppressPackageStartupMessages(library(data.table))
 options(repos = structure(c(CRAN = 'https://cloud.r-project.org')), warn = -1)
 quiet <- FALSE
 
 installed <- as.data.table(installed.packages())
 
-packages <- data.table(
-  package = c('RcppAnnoy', 'Seurat', 'welch-lab/liger', 'kharchenkolab/conos',
-              'kharchenkolab/conosPanel', 'immunogenomics/harmony'),
-  version = c('0.0.14', '3.1.1', '0.5.0', '1.3.0', NA, NA),
-  how = c('version', 'version', 'github', 'github', 'github')
-)
-# 'batchelor', NA, 'BioC'
+packages <- fread(r_dep_file)
+message('Dependencies:')
+print(packages)
 
 for (pckg_name in packages$package) {
   package_dt <- packages[package == pckg_name]
@@ -23,21 +28,24 @@ for (pckg_name in packages$package) {
   how <- package_dt$how
 
   if (
-    ! (pckg_name %in% installed$Package) ||
+    !(pckg_name %in% installed$Package) ||
       (
         !is.na(version)
-        && compareVersion(installed[Package == pckg_name, Version], version) < 0
+          && compareVersion(installed[Package == pckg_name, Version], version) < 0
       )
   ) {
 
     package <- package_dt$package
     message(paste("install", package))
-    if (how == 'version') {
+    if (how == 'cran') {
+      install.packages(package, quiet = quiet)
+    } else if (how == 'version') {
       devtools::install_version(package, version = version, quiet = quiet)
     } else if (how == 'BioC') {
       BiocManager::install(package, quiet = quiet)
     } else if (how == 'github') {
-      package_string <- ifelse(is.na(version), package, paste(package, version, sep = '@'))
+      package_string <- ifelse(is.na(version), package, paste0(package, '@v', version))
+      message('install ', package_string, ' from Github')
       devtools::install_github(package_string, quiet = quiet)
     } else {
       stop(pckg_name, ' cannot be installed via: ', how)

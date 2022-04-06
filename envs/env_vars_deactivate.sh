@@ -24,5 +24,5 @@ unset R_HOME_OLD
 
 # Reset R libs
 R_LIBS=$R_LIBS_OLD
-export $R_LIBS
+export R_LIBS
 unset R_LIBS_OLD

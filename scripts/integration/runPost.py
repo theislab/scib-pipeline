@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import scib
+import numpy as np
 import warnings
 
 warnings.filterwarnings('ignore')

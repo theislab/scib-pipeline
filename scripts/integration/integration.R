@@ -142,51 +142,82 @@ runHarm = function(sobj, batch) {
       return(sobj)
 }
 
-runLiger = function(sobj, batch, hvg, k=20, res=0.4, small.clust.thresh=20) {
-    require(liger)
-    require(Seurat)
+runLiger = function(sobj, batch, hvg, k = 20, res = 0.4, small.clust.thresh = 20) {
+  tryCatch(
+    require(liger),
+    warning = function (w) require(rliger)
+  )
+  require(Seurat)
 
-    # Only counts is converted to liger object. To pass our own normalized data,
-    # store it in the "counts" slot
+  # Only counts is converted to liger object. To pass our own normalized data,
+  # store it in the "counts" slot
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    data <- GetAssayData(sobj, slot = "data")
+    SetAssayData(sobj, slot = "counts", new.data = as.matrix(data))
+  } else {
+    # Seurat v3
     sobj@assays$RNA@counts = sobj@assays$RNA@data
+  }
 
-    # Create Liger object
-    lobj = seuratToLiger(sobj, combined.seurat=T, meta.var=batch, renormalize=F,
-                         remove.missing=F)
+  # Create Liger object
+  lobj = seuratToLiger(
+    sobj,
+    combined.seurat = T,
+    meta.var = batch,
+    renormalize = F,
+    remove.missing = F
+  )
 
-    # We only pass nomarlized data, so store it as such
-    lobj@norm.data <- lobj@raw.data
+  # We only pass nomarlized data, so store it as such
+  lobj@norm.data <- lobj@raw.data
 
-    # Assign hvgs
-    lobj@var.genes <- hvg
+  # Assign hvgs
+  lobj@var.genes <- hvg
 
-    lobj <- scaleNotCenter(lobj, remove.missing=F) # Can't do our own scaling atm
+  lobj <- scaleNotCenter(lobj, remove.missing = F) # Can't do our own scaling atm
 
-    # Use tutorial coarse k suggests of 20.
-    lobj <- optimizeALS(lobj, k=k, thresh=5e-5, nrep=3)
+  # Use tutorial coarse k suggests of 20.
+  lobj <- optimizeALS(lobj, k = k, thresh = 5e-5, nrep = 3)
 
-    lobj <- quantileAlignSNF(lobj, resolution=res, small.clust.thresh=small.clust.thresh)
+  lobj <- quantileAlignSNF(lobj, resolution = res, small.clust.thresh = small.clust.thresh)
 
-    # Store embedding in initial Seurat object
-    # Code taken from ligerToSeurat() function from LIGER
-    inmf.obj <- new(
-      Class = "DimReduc", feature.loadings = t(lobj@W),
-      cell.embeddings = lobj@H.norm, key = "X_emb"
-    )
-    sobj@reductions['X_emb'] <- inmf.obj
+  # Store embedding in initial Seurat object
+  # Code taken from ligerToSeurat() function from LIGER
+  inmf.obj <- new(
+    Class = "DimReduc", feature.loadings = t(lobj@W),
+    cell.embeddings = lobj@H.norm, key = "X_emb"
+  )
+  sobj@reductions['X_emb'] <- inmf.obj
 
-    return(sobj)
+  return(sobj)
 }
 
 runFastMNN = function(sobj, batch) {
-	require(batchelor)
+  suppressPackageStartupMessages({
+    require(batchelor)
+  })
 
-	expr <- sobj@assays$RNA@data
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    expr <- GetAssayData(sobj, slot = "data")
+  } else {
+    # Seurat v3
+    expr <- sobj@assays$RNA@data
+  }
 
-	sce <- fastMNN(expr, batch = sobj@meta.data[[batch]])
+  sce <- fastMNN(expr, batch = sobj@meta.data[[batch]])
+  corrected_data <- assay(sce, "reconstructed")
 
-	sobj@assays$RNA <- CreateAssayObject(assay(sce, "reconstructed"))
-	sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key='fastmnn_')
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    sobj <- SetAssayData(sobj, slot = "data", new.data = as.matrix(corrected_data))
+    sobj@reductions['X_emb'] <- CreateDimReducObject(reducedDim(sce, "corrected"), key = 'fastmnn_')
+  } else {
+    # Seurat v3
+    sobj@assays$RNA <- CreateAssayObject(corrected_data)
+    sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key = 'fastmnn_')
+  }
 
-	return(sobj)
+  return(sobj)
 }
