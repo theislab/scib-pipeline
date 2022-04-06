@@ -15,7 +15,8 @@ dependencies:
   - openblas
   - llvmlite
   - libgcc-ng
-  - numba<=0.46  # for mnnpy
+#  - numba<=0.46  # for mnnpy
+  - anndata>=0.8
   - anndata2ri
   - r-essentials
   - r-devtools
@@ -29,9 +30,9 @@ dependencies:
   - bbknn=1.3.9
   - r-seurat=3.1.1
   - pip:
-    - scib==1.0.0
+    - scib==1.0.1
     - trvaep==0.1.0
-    - git+https://github.com/pinin4fjords/mnnpy.git
+#    - git+https://github.com/pinin4fjords/mnnpy.git
     - scgen==1.1.5
 #    - trvae==1.1.2
 #    - desc==2.0.3

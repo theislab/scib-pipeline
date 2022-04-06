@@ -20,11 +20,6 @@ def runPost(inPath, outPath, conos):
     else:
         adata = scib.pp.read_seurat(inPath)
 
-    # quick fix `TypeError: Object dtype dtype('O') has no native HDF5 equivalent` when saving
-    obs_key = 'nFeature_RNA'
-    if obs_key in adata.obs:
-        adata.obs[obs_key] = adata.obs[obs_key].astype(np.int32)
-
     adata.write(outPath)
 
 

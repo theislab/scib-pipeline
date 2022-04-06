@@ -15,6 +15,7 @@ dependencies:
   - openblas
   - llvmlite
   - libgcc-ng
+  - anndata>=0.8
   - anndata2ri
   - r-essentials
   - r-devtools
