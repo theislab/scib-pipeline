@@ -21,8 +21,8 @@ METHODS:
     output_type: full
   #desc:
   #  output_type: embed
-  mnn:
-    output_type: full
+#  mnn:
+#    output_type: full
   #saucie:
   #  output_type:
   #    - full
