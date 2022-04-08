@@ -2,22 +2,36 @@
 # Created by: mumichae
 # Created on: 6/4/21
 
-args <- commandArgs(trailingOnly = TRUE)
+suppressPackageStartupMessages({
+  library(optparse)
+  library(data.table)
+})
 
-if (length(args) == 1) {
-  r_dep_file <- args
-  message('R dependencies from ', r_dep_file)
-} else {
-  stop('Please provide a R dependency file')
-}
+optparse_list <- list(
+  make_option(
+    c("-d", "--dependencies"),
+    type = "character",
+    help = "Dependency TSV file with R packages & versions",
+    metavar = "character"
+  ),
+  make_option(
+    c("-q", "--quiet"),
+    type = 'logical',
+    default = FALSE,
+    action="store_true",
+    help = "Quiet install"
+  )
+)
 
-suppressPackageStartupMessages(library(data.table))
+
+opt_parser <- OptionParser(option_list = optparse_list)
+opt <- parse_args(opt_parser)
+
 options(repos = structure(c(CRAN = 'https://cloud.r-project.org')), warn = -1)
-quiet <- FALSE
 
 installed <- as.data.table(installed.packages())
 
-packages <- fread(r_dep_file)
+packages <- fread(opt$dependencies)
 message('Dependencies:')
 print(packages)
 
@@ -38,15 +52,15 @@ for (pckg_name in packages$package) {
     package <- package_dt$package
     message(paste("install", package))
     if (how == 'cran') {
-      install.packages(package, quiet = quiet)
+      install.packages(package, quiet = opt$quiet)
     } else if (how == 'version') {
-      devtools::install_version(package, version = version, quiet = quiet)
+      devtools::install_version(package, version = version, quiet = opt$quiet)
     } else if (how == 'BioC') {
-      BiocManager::install(package, quiet = quiet)
+      BiocManager::install(package, quiet = opt$quiet)
     } else if (how == 'github') {
       package_string <- ifelse(is.na(version), package, paste0(package, '@v', version))
       message('install ', package_string, ' from Github')
-      devtools::install_github(package_string, quiet = quiet)
+      devtools::install_github(package_string, quiet = opt$quiet)
     } else {
       stop(pckg_name, ' cannot be installed via: ', how)
     }
@@ -54,12 +68,5 @@ for (pckg_name in packages$package) {
   }
   suppressPackageStartupMessages(library(pckg_name, character.only = TRUE))
 }
-
-# devtools::install_version('RcppAnnoy', version = '0.0.14', quiet = quiet)
-# BiocManager::install('batchelor', quiet = quiet)
-# devtools::install_version('Seurat', version = '3.2.0', quiet = quiet)
-# devtools::install_github('welch-lab/liger@v0.5.0', quiet = quiet)
-# devtools::install_github('kharchenkolab/conos@v1.3.0', quiet = quiet)
-# devtools::install_github('immunogenomics/harmony', quiet = quiet)
 
 sessionInfo()

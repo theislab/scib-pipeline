@@ -40,30 +40,9 @@ jobs:
 
     - name: Setup environments
       shell: bash -l {0}
-      run: |
-        for env in 'scib-pipeline-R${{ matrix.R }}' 'scib-R${{ matrix.R }}'
-        do
-          cat envs/$env.yml
-          mamba env create -qf envs/${env}.yml
+      run: bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
 
-          # set environment variables
-          conda activate ${env}
-          prefix=${CONDA_PREFIX}
-          mamba list
-          conda deactivate
-          echo ${prefix}
-          bash ./envs/set_vars.sh ${prefix}
-        done
-
-        mamba env list
-
-    - name: Install additional R dependencies
-      shell: bash -l {0}
-      run: |
-        conda activate scib-R${{ matrix.R }}
-        Rscript envs/install_R_methods.R envs/dependencies-R${{ matrix.R }}.txt
-
-    - name: Generate data
+    - name: Generate test data
       shell: bash -l {0}
       run: |
         conda activate scib-pipeline-R${{ matrix.R }}
