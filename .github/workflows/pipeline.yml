@@ -6,15 +6,18 @@ on: [push]
 
 jobs:
   pipeline:
+    strategy:
+      matrix:
+        R: [3.6, 4.0]
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    
+
     #- name: Setup python environment with micromamba
     #  uses: mamba-org/provision-with-micromamba@v10
     #  with:
-    #    environment-file: envs/scib-pipeline.yml
+    #    environment-file: envs/scib-pipeline-R3.6.yml
     #    environment-name: scib-pipeline
 
     #- uses: addnab/docker-run-action@v3
@@ -38,18 +41,18 @@ jobs:
     - name: Setup environments
       shell: bash -l {0}
       run: |
-        for env in 'scib-pipeline' 'scib-R'
+        for env in 'scib-pipeline-R${{R}}' 'scib-R${{R}}'
         do
           cat envs/$env.yml
-          mamba env create -qf envs/$env.yml
+          mamba env create -qf envs/${env}.yml
 
           # set environment variables
-          conda activate $env
-          prefix=$CONDA_PREFIX
+          conda activate ${env}
+          prefix=${CONDA_PREFIX}
           mamba list
           conda deactivate
-          echo $prefix
-          bash ./envs/set_vars.sh $prefix
+          echo ${prefix}
+          bash ./envs/set_vars.sh ${prefix}
         done
 
         mamba env list
@@ -57,19 +60,19 @@ jobs:
     - name: Install additional R dependencies
       shell: bash -l {0}
       run: |
-        conda activate scib-R
-        Rscript envs/install_R_methods.R
+        conda activate scib-R${{R}}
+        Rscript envs/install_R_methods.R envs/dependencies-R${{R}}.txt
 
     - name: Generate data
       shell: bash -l {0}
       run: |
-        conda activate scib-pipeline
+        conda activate scib-pipeline-R${{R}}
         python data/generate_data.py
 
     - name: Run pipeline
       shell: bash -l {0}
       run: |
         # Run pipeline
-        conda activate scib-pipeline
+        conda activate scib-pipeline-R${{R}}
         snakemake integration --configfile configs/test_data.yaml -kc
         snakemake metrics --configfile configs/test_data.yaml -kc

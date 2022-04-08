@@ -97,11 +97,11 @@ In case some lines in the environment scripts cause problems, you can edit the f
 
 There are multiple different environments for the python dependencies:
 
-| YAML file location           | Environment name    | Description                                                                                         |
-|------------------------------|---------------------|-----------------------------------------------------------------------------------------------------|
-| `envs/scib-pipeline.yml`     | `scib-pipeline`     | Base environment for calling the pipeline, running python integration methods and computing metrics |
-| `envs/scib-pipeline-R4.yml`  | `scib-pipeline-R4`  | Same as `scib-pipeline` but using R 4.0                                                             |
-| `envs/scIB-python-paper.yml` | `scIB-python-paper` | Environment used for the results in the [publication](https://doi.org/10.1101/2020.05.22.111161)    |
+| YAML file location            | Environment name     | Description                                                                                      |
+|-------------------------------|----------------------|--------------------------------------------------------------------------------------------------|
+| `envs/scib-pipeline-R4.0.yml` | `scib-pipeline-R4.0` | Base environment for calling the pipeline using R 4.0 and python >= 3.7                          |
+| `envs/scib-pipeline-R3.6.yml` | `scib-pipeline-R3.6` | Base environment for calling the pipeline using R 3.6 and python >= 3.7                          |
+| `envs/scIB-python-paper.yml`  | `scIB-python-paper`  | Environment used for the results in the [publication](https://doi.org/10.1101/2020.05.22.111161) |
 
 The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
 It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it
@@ -131,11 +131,11 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 
 ### R environments
 
-| YAML file location            | Environment name     | R dependency file           | Description                                                                                           |
-|-------------------------------|----------------------|-----------------------------|-------------------------------------------------------------------------------------------------------|
-| `envs/scIB-R-integration.yml` | `scIB-R-integration` | 'envs/r36_dependencies.tsv' | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
-| `envs/scib-R.yml`             | `scib-R`             | 'envs/r36_dependencies.tsv' | More up to date environment with R 3.6 dependencies                                                   |
-| `envs/scib-R4.yml`            | `scib-R4`            | 'envs/r4_dependencies.tsv'  | More up to date environment with R 4 dependencies                                                     |
+| YAML file location            | Environment name     | R dependency file            | Description                                                                                           |
+|-------------------------------|----------------------|------------------------------|-------------------------------------------------------------------------------------------------------|
+| `envs/scib-R4.0.yml`          | `scib-R4.0`          | 'envs/dependencies-R4.0.tsv' | R environment using R 4.0                                                                             |
+| `envs/scib-R3.6.yml`          | `scib-R3.6`          | 'envs/dependencies-R3.6.tsv' | R environment using R 3.6                                                                             |
+| `envs/scIB-R-integration.yml` | `scIB-R-integration` | 'envs/r36_dependencies.tsv'  | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
 
 Depending on the R environment used, some R packages must be additionally installed in R instead of conda.
 For convenience, we provide the `envs/install_R_methods.R` scripts that installs the necessary dependencies
@@ -146,7 +146,7 @@ Don't forget to set the environment variables before installing anything through
 conda activate scib-R
 conda_prefix=$CONDA_PREFIX
 conda deactivate
-. envs/set_vars.sh $conda_prefix
+bash envs/set_vars.sh $conda_prefix
 ```
 
 Activate the R environment you plan on using and call the script as follows, with the correct R dependency
@@ -212,7 +212,7 @@ A dependency graph of the workflow can be created anytime and is useful to gain 
 Snakemake can create a `graphviz` representation of the rules, which can be piped into an image file.
 
 ```shell
-snakemake --configfile configs/test_data.yaml --rulegraph | dot -Tpng -Grankdir=TB > dependency.png
+snakemake --configfile configs/test_data-R3.6.yaml --rulegraph | dot -Tpng -Grankdir=TB > dependency.png
 ```
 
 ![Snakemake workflow](./dependency.png)

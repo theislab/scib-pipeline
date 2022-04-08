@@ -1,6 +1,6 @@
 ROOT: data
-r_env : scib-R
-py_env : scib-pipeline
+r_env : scib-R4.0
+py_env : scib-pipeline-R4.0
 
 timing: false
 unintegrated_metrics: false
@@ -75,7 +75,7 @@ METHODS:
       output_type: full
 
 DATA_SCENARIOS:
-  test_data:
+  test_data_r4:
     batch_key: batch
     label_key: celltype
     organism: mouse
