@@ -8,7 +8,7 @@ jobs:
   pipeline:
     strategy:
       matrix:
-        R: [3.6, 4.0]
+        R: ['3.6', '4.0']
     runs-on: ubuntu-latest
 
     steps:
