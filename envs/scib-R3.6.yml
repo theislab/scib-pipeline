@@ -15,9 +15,12 @@ dependencies:
   # Seurat dependencies
   - bioconductor-multtest
   - r-sdmtools
+  - r-seurat=3.1.1
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
   - openjdk
   - r-hdf5r
   - r-hmisc
+  # conos dependencies
+  - bioconductor-complexheatmap

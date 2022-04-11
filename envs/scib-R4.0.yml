@@ -26,3 +26,5 @@ dependencies:
   - openjdk
   - r-hdf5r
   - r-hmisc
+  # conos dependencies
+  - bioconductor-complexheatmap
