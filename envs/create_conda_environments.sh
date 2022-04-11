@@ -84,10 +84,10 @@ echo "Install R packages through R"
 
 echo "scib pipeline environment..."
 conda run -n "scib-pipeline-R${R_VERSION}" \
- Rscript -e "devtools::install_github('theislab/kBET', quiet=TRUE)"
+ Rscript -e "remotes::install_github('theislab/kBET', quiet=TRUE)"
 
 echo "scib R environment..."
-conda run -n "scib-R${R_VERSION}" --live-stream \
+conda run -n "scib-R${R_VERSION}" \
  Rscript "$SCRIPT_DIR/install_R_methods.R" -d "$SCRIPT_DIR/dependencies-R${R_VERSION}.tsv" $QUIET
 
 echo "Done."

@@ -20,6 +20,7 @@ dependencies:
   - anndata2ri
   - r-essentials
   - r-devtools
+  - r-remotes
   - r-stringi
   - bioconductor-scater
   - bioconductor-scran
