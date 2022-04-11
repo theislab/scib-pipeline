@@ -55,5 +55,5 @@ jobs:
       run: |
         # Run pipeline
         conda activate scib-pipeline-R${{ matrix.R }}
-        snakemake integration --configfile configs/test_data.yaml -kc
-        snakemake metrics --configfile configs/test_data.yaml -kc
+        snakemake integration --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
+        snakemake metrics --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
