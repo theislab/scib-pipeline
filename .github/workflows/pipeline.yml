@@ -40,6 +40,8 @@ jobs:
 
     - name: Setup environments
       shell: bash -l {0}
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       run: bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
 
     - name: Generate test data
