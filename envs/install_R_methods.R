@@ -31,7 +31,7 @@ options(repos = structure(c(CRAN = 'https://cloud.r-project.org')), warn = -1)
 
 installed <- as.data.table(installed.packages())
 
-packages <- fread(opt$dependencies)
+packages <- fread(cmd = paste("grep -v '#'", opt$dependencies))
 message('Dependencies:')
 print(packages)
 
