@@ -66,6 +66,7 @@ for (pckg_name in packages$package) {
     }
     message(paste("installed", package))
   }
+  message('import ', pckg_name)
   suppressPackageStartupMessages(library(pckg_name, character.only = TRUE))
 }
 
