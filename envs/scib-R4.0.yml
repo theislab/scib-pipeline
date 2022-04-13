@@ -15,11 +15,11 @@ dependencies:
   - r-harmony
   # Seurat dependencies
   - r-seurat=3
-#  - bioconductor-multtest
-#  - r-sdmtools
-#  - r-stringi
-#  - r-metap
-#  - r-spatstat=1.64
+  - bioconductor-multtest
+  - r-sdmtools
+  - r-stringi
+  - r-metap
+  - r-spatstat=1.64
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
