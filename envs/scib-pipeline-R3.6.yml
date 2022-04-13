@@ -5,6 +5,7 @@ channels:
 dependencies:
   - python>=3.7
   - r-base=3.6
+  - rpy2<=3.4.2
   - pip
   - snakemake>=5
   - networkx
