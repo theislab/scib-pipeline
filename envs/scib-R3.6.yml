@@ -7,6 +7,7 @@ dependencies:
   - r-base=3.6
   - r-essentials
   - gsl
+  - llvmlite
   - r-optparse
   - r-remotes
   - r-devtools
@@ -19,8 +20,6 @@ dependencies:
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
-  - openjdk
-  - r-hdf5r
-  - r-hmisc
+  - r-liger=0.5.0
   # conos dependencies
   - bioconductor-complexheatmap

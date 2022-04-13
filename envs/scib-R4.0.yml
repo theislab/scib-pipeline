@@ -12,19 +12,17 @@ dependencies:
   - r-devtools
   - r-biocmanager
   - r-cairo
+  - r-harmony
   # Seurat dependencies
-  - bioconductor-multtest
-  - r-sdmtools
-  - r-stringi
-  - r-metap
   - r-seurat=3
-  - r-spatstat=1.64
+#  - bioconductor-multtest
+#  - r-sdmtools
+#  - r-stringi
+#  - r-metap
+#  - r-spatstat=1.64
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
   - r-liger=0.5.0
-  - openjdk
-  - r-hdf5r
-  - r-hmisc
   # conos dependencies
   - bioconductor-complexheatmap
