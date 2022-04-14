@@ -1,3 +1,6 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bashrc; ")
+
 from ScibConfig import *
 
 #configfile: "config.yaml"
