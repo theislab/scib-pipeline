@@ -15,6 +15,7 @@ dependencies:
   - r-harmony
   # Seurat dependencies
   - r-seurat=3
+  - r-seuratobject
   - bioconductor-multtest
   - r-sdmtools
   - r-stringi
