@@ -1,0 +1,28 @@
+ROOT: data/scib-R3.6_small
+r_env : scib-R3.6
+py_env : scib-pipeline-R3.6
+
+timing: false
+unintegrated_metrics: false
+
+FEATURE_SELECTION:
+  full_feature: 0
+
+SCALING:
+  - unscaled
+
+METHODS:
+  bbknn:
+    output_type: knn
+  scanorama:
+    output_type: embed
+  combat:
+    output_type: full
+
+DATA_SCENARIOS:
+  test_data_r36_small:
+    batch_key: batch
+    label_key: celltype
+    organism: mouse
+    assay: expression
+    file: data/adata_norm.h5ad
