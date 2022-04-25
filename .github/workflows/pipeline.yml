@@ -54,7 +54,7 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate scib-pipeline-R${{ matrix.R }}
-        snakemake metrics --configfile configs/test_data-R${{ matrix.R }}_small.yaml -kc
+        snakemake metrics --configfile configs/test_data-R${{ matrix.R }}_small.yaml -kc1
 
     - name: Run pipeline - Python integration methods
       shell: bash -l {0}
