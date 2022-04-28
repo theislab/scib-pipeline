@@ -27,7 +27,7 @@ The different environments are explained below and the general command to instal
 conda env create -f ENVIRONMENT.yml
 ```
 
-> Note: Instead of `conda` you can use `mamba` to speed up installation
+> **Note**: Instead of `conda` you can use `mamba` to speed up installation
 
 ### Python environments
 
@@ -44,7 +44,7 @@ under the `py_env` key in the config files under `configs/` so that the pipeline
 Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to
 reproduce the results.
 
-> *Note* `scIB-python-paper` is deprecated and only included for reproducibility purposes and is not updated with
+> **Note**: `scIB-python-paper` is deprecated and only included for reproducibility purposes and is not updated with
 > changes to the pipeline code.
 > We don't recommend using it, as old dependencies tend to break after newer packages are available.
 
@@ -60,7 +60,7 @@ Depending on the R environment used, some R packages must be additionally instal
 convenience, we provide the `install_R_methods.R` scripts that installs the necessary dependencies through R
 directly. Don't forget to set the environment variables before installing anything through R. e.g. for `scib-R`:
 
-> *Note* `scIB-python-paper` is deprecated and only included for reproducibility purposes and is not updated with
+> **Note**: `scIB-python-paper` is deprecated and only included for reproducibility purposes and is not updated with
 > changes to the pipeline code.
 > We don't recommend using it, as old dependencies tend to break after newer packages are available.
 
@@ -132,7 +132,7 @@ conda activate scib-pipeline-R4.0
 Rscript -e "devtools::install_github('theislab/kBET')"
 ```
 
-> *Note*: `devtools` should already be installed through conda
+> **Note**: `devtools` should already be installed through conda
 
 ### Install R integration methods in R environment
 
