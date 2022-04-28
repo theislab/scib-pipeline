@@ -20,16 +20,15 @@ analysis of the different steps and combinations of preprocesssing and integrati
 
 ### Please cite:
 
-_**Benchmarking atlas-level data integration in single-cell genomics.**  
-MD Luecken, M Büttner, K Chaichoompu, A Danese, M Interlandi, MF Mueller, DC Strobl, L Zappia, M Dugas, M Colomé-Tatché, FJ Theis
-bioRxiv 2020.05.22.111161; doi: https://doi.org/10.1101/2020.05.22.111161 _
+Luecken, M.D., Büttner, M., Chaichoompu, K. et al. Benchmarking atlas-level data integration in single-cell genomics.
+Nat Methods 19, 41–50 (2022). https://doi.org/10.1038/s41592-021-01336-8
 
 ## Installation
 
 To reproduce the results from this study, two separate conda environments are needed for python and R operations.
 Please make sure you have [`conda`](https://conda.io/projects/conda) installed on your system to be
 able to use the pipeline.
-We also recommend installing ['mamba'](https://mamba.readthedocs.io) for shorter installation times and smaller memory
+We also recommend installing [`mamba`](https://mamba.readthedocs.io) for shorter installation times and smaller memory
 overhead.
 
 The installation is automated by an installation script that install the correct python and R environments based on the
@@ -47,8 +46,8 @@ Check the script's help output in order to get the full list of arguments it use
 bash envs/create_conda_environments.sh -h 
 ```
 
-Once installation is successful, you will have the python environment `scib-pipeline-<R version>` and the R environment
-`scib-<R version>` that you must specify in the config file (see [click on this link](#setup-configuration-file)).
+Once installation is successful, you will have the python environment `scib-pipeline-R<version>` and the R environment
+`scib-R<version>` that you must specify in the [config file](#setup-configuration-file).
 
 | R version | Environment name     | YAML file location            |
 |-----------|----------------------|-------------------------------|
@@ -57,7 +56,7 @@ Once installation is successful, you will have the python environment `scib-pipe
 
 
 For a more detailed description of the environment files and how to install the different environments manually, please
-refer to the README in the `envs/`.
+refer to the README in `envs/`.
 
 
 ## Running the Pipeline

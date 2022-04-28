@@ -1,4 +1,4 @@
-# Installation
+# Conda environments
 
 To reproduce the results from this study, two different conda environments are needed, one for the python integration
 methods the other for the R integration methods.
@@ -70,23 +70,37 @@ We experience difficulties working with `rpy2` and R installations when working 
 installation of R.
 In order to make sure that R libraries are correctly isolated to their respective environments, we provide environment
 variables that should be set during environment activation and reset during deactivation.
+You must first determine path of your environment, either by activating and viewing the `$CONDA_PREFIX`, or by listing
+all conda environments.
 
-Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to the
-designated locations of each conda environment. Make sure to determine `$CONDA_PREFIX` in the activated environment
-first, then deactivate the environment before copying the files to prevent unwanted effects.
-This process is automated with the following script, which you should call for each environment that uses R.
+``commandline
+# check CONDA_PREFIX variable directly
+conda activate scib-pipeline-R4.0
+echo $CONDA_PREFIX
+conda deactivate
 
-```console
-bash set_vars.sh $conda_prefix
+# list conda enviromnents
+conda env list
+``
+
+We provide the following script, which you should call for each environment that uses R.
+Make sure to deactivate your environment before setting any environment variables, to prevent unwanted effects.
+
+```commandline
+bash set_vars.sh <path to conda env>
 ```
 
 After the script has successfully finished, you should be ready to use your new environment.
 
+### Alternative: Set environment variables manually
+
 If you want to set these and potentially other variables manually, proceed as follows.
+Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to the
+designated locations of each conda environment.
 
 e.g. for scib-pipeline-R4.0:
 
-```console
+```commandline
 conda activate scib-pipeline-R4.0
 conda_prefix=$CONDA_PREFIX 
 conda deactivate
@@ -113,7 +127,7 @@ Please make sure that the environment variables are set correctly as described i
 The kBET metric is implemented in R and must be installed from [source code](https://github.com/theislab/kBET).
 In your python environment (e.g. here `scib-pipeline-R4.0`), install `kBET` as follows:
 
-```
+```commandline
 conda activate scib-pipeline-R4.0
 Rscript -e "devtools::install_github('theislab/kBET')"
 ```
@@ -125,14 +139,14 @@ Rscript -e "devtools::install_github('theislab/kBET')"
 Activate your R environment (e.g. here `scib-R4.0`) and use the `install_R_methods.R` script with the corresponding R
 dependency file for your environment (see [table](#r-environments)).
 
-```
+```commandline
 conda activate scib-R4.0
 Rscript install_R_methods.R -d dependencies-R4.0.tsv
 ```
 
 We used these conda versions of the R integration methods in our study:
 
-```
+```commandline
 harmony_1.0
 seurat_3.2.0
 conos_1.3.0
