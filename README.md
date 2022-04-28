@@ -3,7 +3,7 @@
 This repository contains the snakemake pipeline for our benchmarking study for data integration tools.
 In this study, we benchmark 16 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 68 
 methods combinations on 85 batches of gene expression and chromatin accessibility data.
-The pipeline uses the [`scIB`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
+The pipeline uses the [`scib`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
 analysis of the different steps and combinations of preprocesssing and integration methods.
 
 ![Workflow](./figure.png)
@@ -26,147 +26,39 @@ bioRxiv 2020.05.22.111161; doi: https://doi.org/10.1101/2020.05.22.111161 _
 
 ## Installation
 
-To reproduce the results from this study, three different conda environments are needed.
-There are different environments for the python integration methods, the R integration methods and
-the conversion of R data types to anndata objects.
+To reproduce the results from this study, two separate conda environments are needed for python and R operations.
+Please make sure you have [`conda`](https://conda.io/projects/conda) installed on your system to be
+able to use the pipeline.
+We also recommend installing ['mamba'](https://mamba.readthedocs.io) for shorter installation times and smaller memory
+overhead.
 
-The main steps are:
-
-1. Install the conda environment
-2. Set environment variables
-3. Install any extra packages through `R`
-
-For the installation of conda, follow [these](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
-instructions or use your system's package manager.
-The environments have only been tested on linux operating systems, although it should be possible to run the pipeline
-using Mac OS.
-
-To create the conda environments use the `.yml` files in the `envs` directory.
-In order for the pipeline to work out of the box, you need a python and an R environment.
-The different environments are explained below.
-The general command to install them is:
-
-```console
-conda env create -f FILENAME.yml
-```
-
-> Note: Instead of `conda` you can use `mamba` to speed up installation times
-
-For R environments, some dependencies need to be installed after the environment has been created.
-However, it is important to set environment variables for the conda environments first, to guarantee that the correct R
-version installs packages into the correct directories.
-All necessary steps are mentioned below.
-
-### Setting Environment Variables
-
-Some parameters need to be added manually to the conda environment in order for packages to work correctly.
-For example, all environments using R need `LD_LIBRARY_PATH` set to the conda R library path.
-If that variable is not set, `rpy2` might reference the library path of a different R installation that might be on your system.
-
-Environment variables are provided in `env_vars_activate.sh` and `env_vars_deactivate.sh` and should be copied to the
-designated locations of each conda environment.
-Make sure to determine `$CONDA_PREFIX` in the activated environment first, then deactivate the environment before
-copying the files to prevent unwanted effects.
-This process is automated with the following script, which you should call for each environment that uses R.
-
-```console
-. envs/set_vars.sh <conda_prefix>
-```
-
-After the script has successfully finished, you should be ready to use your new environment.
-
-If you want to set these and potentially other variables manually, proceed as follows.
-
-e.g. for scIB-python:
-
-```console
-conda activate scib-pipeline
-echo $CONDA_PREFIX  # referred to as <conda_prefix>
-conda deactivate
-
-# copy activate variables
-cp envs/env_vars_activate.sh <conda_prefix>/etc/conda/activate.d/env_vars.sh
-# copy deactivate variables
-cp envs/env_vars_deactivate.sh <conda_prefix>/etc/conda/deactivate.d/env_vars.sh
-```
-
-If necessary, create any missing directories manually.
-In case some lines in the environment scripts cause problems, you can edit the files to trouble-shoot.
-
-### Python environments
-
-There are multiple different environments for the python dependencies:
-
-| YAML file location            | Environment name     | Description                                                                                      |
-|-------------------------------|----------------------|--------------------------------------------------------------------------------------------------|
-| `envs/scib-pipeline-R4.0.yml` | `scib-pipeline-R4.0` | Base environment for calling the pipeline using R 4.0 and python >= 3.7                          |
-| `envs/scib-pipeline-R3.6.yml` | `scib-pipeline-R3.6` | Base environment for calling the pipeline using R 3.6 and python >= 3.7                          |
-| `envs/scIB-python-paper.yml`  | `scIB-python-paper`  | Environment used for the results in the [publication](https://doi.org/10.1101/2020.05.22.111161) |
-
-The `scib-pipeline` environment is the one that the user activates before calling the pipeline.
-It needs to be specified under the `py_env` key in the config files under `configs/` so that the pipeline will use it
-for running python methods.
-Alternatively, you can specify `scIB-python-paper` as the `py_env` to recreate the environment used in the paper to
-reproduce the results.
-
-Furthermore, the python environments additionally require the R package [`kBET`](https://github.com/theislab/kBET) to be
-installed manually.
-Make sure that the environment variables are set as described above, so that R packages are correctly installed and 
-located by `rpy2`.
-For example, when working with `scib-pipeline`, call
-
-```console
-conda activate scib-pipeline
-conda_prefix=$CONDA_PREFIX
-conda deactivate
-. envs/set_vars.sh $conda_prefix
-```
-
-Once environment variables have been set, you can install `kBET`:
+The installation is automated by an installation script that install the correct python and R environments based on the
+R version you want to use.
+The pipeline currently supports R 3.6 and R 4.0, and we generally recommend using the latest R version.
+Call the script as follows e.g. for R 4.0
 
 ```commandline
-conda activate <py-environment>
-Rscript -e "devtools::install_github('theislab/kBET')"
+bash envs/create_conda_environments.sh -r 4.0
 ```
 
-### R environments
+Check the script's help output in order to get the full list of arguments it uses.
 
-| YAML file location            | Environment name     | R dependency file            | Description                                                                                           |
-|-------------------------------|----------------------|------------------------------|-------------------------------------------------------------------------------------------------------|
-| `envs/scib-R4.0.yml`          | `scib-R4.0`          | 'envs/dependencies-R4.0.tsv' | R environment using R 4.0                                                                             |
-| `envs/scib-R3.6.yml`          | `scib-R3.6`          | 'envs/dependencies-R3.6.tsv' | R environment using R 3.6                                                                             |
-| `envs/scIB-R-integration.yml` | `scIB-R-integration` | 'envs/r36_dependencies.tsv'  | Environment used for the results in the [publication](doi: https://doi.org/10.1101/2020.05.22.111161) |
-
-Depending on the R environment used, some R packages must be additionally installed in R instead of conda.
-For convenience, we provide the `envs/install_R_methods.R` scripts that installs the necessary dependencies
-through R directly.
-Don't forget to set the environment variables before installing anything through R. e.g. for `scib-R`:
-
-```console
-conda activate scib-R
-conda_prefix=$CONDA_PREFIX
-conda deactivate
-bash envs/set_vars.sh $conda_prefix
+```commandline
+bash envs/create_conda_environments.sh -h 
 ```
 
-Activate the R environment you plan on using and call the script as follows, with the correct R dependency
-file for your environment (see table above).
+Once installation is successful, you will have the python environment `scib-pipeline-<R version>` and the R environment
+`scib-<R version>` that you must specify in the config file (see [click on this link](#setup-configuration-file)).
 
-```
-conda activate <r environment>
-cd envs/
-Rscript install_R_methods.R <r dependency file>
-```
+| R version | Environment name     | YAML file location            |
+|-----------|----------------------|-------------------------------|
+| 4.0       | `scib-pipeline-R4.0` | `envs/scib-pipeline-R4.0.yml` |
+| 3.6       | `scib-pipeline-R3.6` | `envs/scib-pipeline-R3.6.yml` |
 
-We used these conda versions of the R integration methods in our study:
 
-```
-harmony_1.0
-Seurat_3.2.0
-conos_1.3.0
-liger_0.5.0
-batchelor_1.4.0
-```
+For a more detailed description of the environment files and how to install the different environments manually, please
+refer to the README in the `envs/`.
+
 
 ## Running the Pipeline
 
