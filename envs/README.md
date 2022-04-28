@@ -73,7 +73,7 @@ variables that should be set during environment activation and reset during deac
 You must first determine path of your environment, either by activating and viewing the `$CONDA_PREFIX`, or by listing
 all conda environments.
 
-``commandline
+```commandline
 # check CONDA_PREFIX variable directly
 conda activate scib-pipeline-R4.0
 echo $CONDA_PREFIX
@@ -81,7 +81,7 @@ conda deactivate
 
 # list conda enviromnents
 conda env list
-``
+```
 
 We provide the following script, which you should call for each environment that uses R.
 Make sure to deactivate your environment before setting any environment variables, to prevent unwanted effects.
