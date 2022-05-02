@@ -58,11 +58,14 @@ for env in "scib-pipeline-R${R_VERSION}" "scib-R${R_VERSION}"; do
   if [[ $ALL_ENVS == *"$env"* ]]
   then
     echo "Update $env..."
-    mamba env update $QUIET -f "envs/${env}.yml"
+    $MAMBA_CMD env update $QUIET -f "envs/${env}.yml"
   else
     echo "Create $env..."
-    mamba env create $QUIET -f "envs/${env}.yml"
+    $MAMBA_CMD env create $QUIET -f "envs/${env}.yml"
   fi
+
+  # list all pip dependencies
+  conda run -n $env pip list
 
   # Set environment variables
   prefix=$($MAMBA_CMD env list | grep "${env} " | awk -F'[ ]' '{print $(NF)}')

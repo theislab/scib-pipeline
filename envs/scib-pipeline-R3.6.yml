@@ -16,6 +16,7 @@ dependencies:
   - openblas
   - llvmlite
   - libgcc-ng
+  - gxx
 #  - numba<=0.46  # for mnnpy
   - anndata>=0.8
   - anndata2ri
