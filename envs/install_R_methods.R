@@ -18,7 +18,7 @@ optparse_list <- list(
     c("-q", "--quiet"),
     type = 'logical',
     default = FALSE,
-    action="store_true",
+    action = "store_true",
     help = "Quiet install"
   )
 )
