@@ -31,12 +31,6 @@ jobs:
         channels: conda-forge,bioconda
         auto-activate-base: true
         activate-environment: ""
-    
-    - shell: bash -l {0}
-      run: |
-        mamba --version
-        ls -la
-        mamba list
 
     - name: Setup environments
       shell: bash -l {0}
