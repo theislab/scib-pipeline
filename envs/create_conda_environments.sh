@@ -64,8 +64,10 @@ for env in "scib-pipeline-R${R_VERSION}" "scib-R${R_VERSION}"; do
     $MAMBA_CMD env create $QUIET -f "envs/${env}.yml"
   fi
 
-  # list all pip dependencies
-  conda run -n $env pip list
+  if [ "$QUIET" != "-q" ]; then
+    # list all pip dependencies
+    conda run -n $env pip list
+  fi
 
   # Set environment variables
   prefix=$($MAMBA_CMD env list | grep "${env} " | awk -F'[ ]' '{print $(NF)}')
