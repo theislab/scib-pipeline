@@ -31,29 +31,31 @@ able to use the pipeline.
 We also recommend installing [`mamba`](https://mamba.readthedocs.io) for shorter installation times and smaller memory
 overhead.
 
-The installation is automated by an installation script that install the correct python and R environments based on the
-R version you want to use.
+We provide python and R environment YAML files in `envs/`, together with an installation script for setting up the
+correct environments in a single command. based on the R version you want to use.
 The pipeline currently supports R 3.6 and R 4.0, and we generally recommend using the latest R version.
 Call the script as follows e.g. for R 4.0
 
-```commandline
+```shell
 bash envs/create_conda_environments.sh -r 4.0
 ```
 
 Check the script's help output in order to get the full list of arguments it uses.
 
-```commandline
+```shell
 bash envs/create_conda_environments.sh -h 
 ```
 
 Once installation is successful, you will have the python environment `scib-pipeline-R<version>` and the R environment
 `scib-R<version>` that you must specify in the [config file](#setup-configuration-file).
 
-| R version | Environment name     | YAML file location            |
-|-----------|----------------------|-------------------------------|
-| 4.0       | `scib-pipeline-R4.0` | `envs/scib-pipeline-R4.0.yml` |
-| 3.6       | `scib-pipeline-R3.6` | `envs/scib-pipeline-R3.6.yml` |
+| R version | Python environment name | R environment name | Test data config YAML file   |
+|-----------|-------------------------|--------------------|------------------------------|
+| 4.0       | `scib-pipeline-R4.0`    | `scib-R4.0`        | `configs/test_data-R4.0.yml` |
+| 3.6       | `scib-pipeline-R3.6`    | `scib-R3.6`        | `configs/test_data-R3.6.yml` |
 
+> **Note**: The installation script only works for the environments listed in the table above.
+> The environments used in our [study][paper] are included for reproducibility purposes and are described in `envs/`.
 
 For a more detailed description of the environment files and how to install the different environments manually, please
 refer to the README in `envs/`.
@@ -72,28 +74,25 @@ More information on how to use the data generation script can be found in `data/
 
 ### Setup Configuration File
 
-The parameters and input files are specified in config files, that can be found in `configs/`.
-In the `DATA_SCENARIOS` section you can define the input data per scenario.
-The main input per scenario is a preprocessed `.h5ad` file of an anndata with batch and cell type annotations.
-
-TODO: explain different entries
+The parameters and input files are specified in config files.
+A description of the config formats and example files can found in `configs/`.
+You can use the example config that use the test data to get the pipeline running quickly, and then modify a copy of it
+to work with your own data.
 
 ### Pipeline Commands
 
-To call the pipeline on the test data
+To call the pipeline on the test data e.g. using R 4.0
 
-```commandline
-snakemake --configfile configs/test_data.yaml -n
+```shell
+snakemake --configfile configs/test_data-R4.0.yaml -n
 ```
 
 This gives you an overview of the jobs that will be run.
-In order to execute these jobs, call
+In order to execute these jobs with up to 10 cores, call
 
-```commandline
-snakemake --configfile configs/test_data.yaml --cores N_CORES
+```shell
+snakemake --configfile configs/test_data-R4.0.yaml --cores 10
 ```
-
-where `N_CORES` defines the number of threads to use.
 
 More snakemake commands can be found in the [documentation](snakemake.readthedocs.io/).
 
@@ -127,3 +126,6 @@ Tools that are compared include:
 - [DESC](https://github.com/eleozzr/desc)
 - [LIGER](https://github.com/MacoskoLab/liger)
 - [SAUCIE](https://github.com/KrishnaswamyLab/SAUCIE)
+
+
+[paper]: https://doi.org/10.1038/s41592-021-01336-8
