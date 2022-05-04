@@ -26,10 +26,10 @@ Nat Methods 19, 41–50 (2022). https://doi.org/10.1038/s41592-021-01336-8
 ## Installation
 
 To reproduce the results from this study, two separate conda environments are needed for python and R operations.
-Please make sure you have [`conda`](https://conda.io/projects/conda) installed on your system to be
-able to use the pipeline.
-We also recommend installing [`mamba`](https://mamba.readthedocs.io) for shorter installation times and smaller memory
-overhead.
+Please make sure you have either [`mambaforge`](https://github.com/conda-forge/miniforge) or
+[`conda`](https://conda.io/projects/conda) installed on your system to be able to use the pipeline.
+We recommend using [`mamba`](https://mamba.readthedocs.io), which is also available for conda, for faster package
+installations with a smaller memory footprint.
 
 We provide python and R environment YAML files in `envs/`, together with an installation script for setting up the
 correct environments in a single command. based on the R version you want to use.
