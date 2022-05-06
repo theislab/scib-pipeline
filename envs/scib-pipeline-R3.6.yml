@@ -1,10 +1,11 @@
-name: scib-pipeline
+name: scib-pipeline-R3.6
 channels:
   - conda-forge
   - bioconda
 dependencies:
   - python>=3.7
   - r-base=3.6
+  - rpy2<=3.4.2
   - pip
   - snakemake>=5
   - networkx
@@ -15,11 +16,13 @@ dependencies:
   - openblas
   - llvmlite
   - libgcc-ng
+  - gxx
 #  - numba<=0.46  # for mnnpy
   - anndata>=0.8
   - anndata2ri
   - r-essentials
   - r-devtools
+  - r-remotes
   - r-stringi
   - bioconductor-scater
   - bioconductor-scran
@@ -30,7 +33,8 @@ dependencies:
   - bbknn=1.3.9
   - r-seurat=3.1.1
   - pip:
-    - scib==1.0.1
+#    - scib==1.0.2
+    - git+https://github.com/theislab/scib.git
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
     - scgen==1.1.5

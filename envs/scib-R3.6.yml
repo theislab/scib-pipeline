@@ -1,12 +1,13 @@
-name: scib-R
+name: scib-R3.6
 channels:
   - bioconda
   - conda-forge
 dependencies:
   - python>=3.7
-  - r-base=3.6.0
+  - r-base=3.6
   - r-essentials
   - gsl
+  - llvmlite
   - r-optparse
   - r-remotes
   - r-devtools
@@ -15,9 +16,10 @@ dependencies:
   # Seurat dependencies
   - bioconductor-multtest
   - r-sdmtools
+  - r-seurat=3.1.1
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
-  - openjdk
-  - r-hdf5r
-  - r-hmisc
+  - r-liger=0.5.0
+  # conos dependencies
+  - bioconductor-complexheatmap

@@ -1,4 +1,4 @@
-name: scib-R4
+name: scib-R4.0
 channels:
   - bioconda
   - conda-forge
@@ -12,17 +12,18 @@ dependencies:
   - r-devtools
   - r-biocmanager
   - r-cairo
+  - r-harmony
   # Seurat dependencies
+  - r-seurat=3
+  - r-seuratobject
   - bioconductor-multtest
   - r-sdmtools
   - r-stringi
   - r-metap
-  - r-seurat=3
   - r-spatstat=1.64
   # batchelor
   - bioconductor-batchelor
   # Liger dependencies
   - r-liger=0.5.0
-  - openjdk
-  - r-hdf5r
-  - r-hmisc
+  # conos dependencies
+  - bioconductor-complexheatmap
