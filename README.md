@@ -33,7 +33,7 @@ installations with a smaller memory footprint.
 
 We provide python and R environment YAML files in `envs/`, together with an installation script for setting up the
 correct environments in a single command. based on the R version you want to use.
-The pipeline currently supports R 3.6 and R 4.0, and we generally recommend using the latest R version.
+The pipeline currently supports R 3.6 and R 4.0, and we generally recommend using version R 4.0.
 Call the script as follows e.g. for R 4.0
 
 ```shell
