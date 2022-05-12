@@ -19,11 +19,12 @@ def get_adata_rand_batch(pca=False, neighbors=False):
     adata.obs['batch'] = np.random.randint(0, n_batch, adata.n_obs)
     # add batch effect to counts
     for i in range(n_batch):
-        adata[adata.obs['batch'] == i].X = adata[adata.obs['batch'] == i].X + i
+        adata[adata.obs['batch'] == i].X += i
     adata.obs['batch'] = adata.obs['batch'].astype(str).astype("category")
 
     adata.layers['counts'] = adata.X
-    sc.pp.recipe_zheng17(adata)
+    sc.pp.normalize_per_cell(adata)
+    sc.pp.log1p(adata)
 
     scib.preprocessing.reduce_data(
         adata,
@@ -83,4 +84,5 @@ if __name__ == '__main__':
 
     if not filepath.exists() or args.force:
         adata = get_adata_rand_batch()
+        print(f'Write anndata to {filepath}')
         adata.write(filepath)

@@ -22,7 +22,7 @@ rule integration_run_python:
         cell_type = cfg.get_celltype_option_for_integration,
         hvgs      = cfg.get_hvg,
         timing    = "-t" if cfg.timing else "",
-        cmd       = f"conda run -n {cfg.py_env} python"
+        cmd       = f"conda run --no-capture-output -n {cfg.py_env} python"
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad.benchmark")
     shell:
@@ -53,7 +53,7 @@ rule integration_run_r:
     params:
         batch_key = lambda w: cfg.get_from_scenario(w.scenario, key="batch_key"),
         hvgs      = lambda w: cfg.get_hvg(w, rules.integration_prepare.output, prep="RDS"),
-        cmd       = f"conda run -n {cfg.r_env} Rscript",
+        cmd       = f"conda run --no-capture-output -n {cfg.r_env} Rscript",
         timing    = "-t" if cfg.timing else ""
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS.benchmark")
@@ -79,7 +79,7 @@ rule convert_RDS_h5ad:
         Convert integrated data from {wildcards.method} into h5ad
         """
     params:
-        cmd = f"conda run -n {cfg.py_env} python"
+        cmd = f"conda run --no-capture-output -n {cfg.py_env} python"
     shell:
         """
         if [ {wildcards.method} == "conos" ]
