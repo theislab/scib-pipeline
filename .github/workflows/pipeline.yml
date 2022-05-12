@@ -1,0 +1,69 @@
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on: [push]
+
+jobs:
+  pipeline:
+    strategy:
+      matrix:
+        R: ['3.6', '4.0']
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    #- name: Setup python environment with micromamba
+    #  uses: mamba-org/provision-with-micromamba@v10
+    #  with:
+    #    environment-file: envs/scib-pipeline-R3.6.yml
+    #    environment-name: scib-pipeline
+
+    #- uses: addnab/docker-run-action@v3
+    #  with:
+    #    image: condaforge/mambaforge:latest
+    #    options: -v ${{ github.workspace }}:/workspace
+    
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        mamba-version: "*"
+        channels: conda-forge,bioconda
+        auto-activate-base: true
+        activate-environment: ""
+
+    - name: Setup environments
+      shell: bash -l {0}
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      run: bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
+
+    - name: Generate test data
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline-R${{ matrix.R }}
+        python data/generate_data.py
+
+    - name: Run pipeline end-to-end on method subset
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline-R${{ matrix.R }}
+        snakemake metrics --configfile configs/test_data-R${{ matrix.R }}_small.yaml -kc1
+
+    - name: Run pipeline - Python integration methods
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline-R${{ matrix.R }}
+        snakemake integrated_python --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
+
+    - name: Run pipeline - R integration methods
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline-R${{ matrix.R }}
+        snakemake integrated_R --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
+
+    - name: Run pipeline - Metrics
+      shell: bash -l {0}
+      run: |
+        conda activate scib-pipeline-R${{ matrix.R }}
+        snakemake metrics --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
