@@ -1,3 +1,5 @@
+[![Pipeline](https://github.com/theislab/scib-pipeline/actions/workflows/pipeline.yml/badge.svg)](https://github.com/theislab/scib-pipeline/actions/workflows/pipeline.yml)
+
 # Pipeline for benchmarking atlas-level single-cell integration
 
 This repository contains the snakemake pipeline for our benchmarking study for data integration tools.
