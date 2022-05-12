@@ -70,6 +70,8 @@ and metrics reproducibly for different data scenarios preprocessing setups.
 
 A script in `data/` can be used to generate test data.
 This is useful, in order to ensure that the installation was successful before moving on to a larger dataset.
+The pipeline expects an `anndata` object with normalised and log-transformed counts in `adata.X` and counts in
+`adata.layers['counts']`.
 More information on how to use the data generation script can be found in `data/README.md`.
 
 ### Setup Configuration File
