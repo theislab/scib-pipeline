@@ -134,7 +134,7 @@ snakemake --configfile configs/test_data-R3.6.yaml --rulegraph | dot -Tpng -Gran
 ### R installation errors
 
 If you are getting errors related to installing R packages while setting up your conda environments, please ensure that
-`$R_LIBS` points to the conda path.
+`$R_LIBS` points to the conda path R library path instead of the system R library path.
 
 ```shell
 echo $R_LIBS
@@ -144,9 +144,15 @@ echo $R_LIBS
 .libPaths()
 ```
 
-These variables should be set correctly with the installation scripts, however, files such as `.Rprofile` can overwrite
-these variables and append system R library paths.
-In those cases, removing `.Rprofile` and working from a new shell should solve the issue.
+You can view conda paths by listing all environments:
+
+```shell
+conda env list
+```
+
+The library path variable should be set correctly with the installation scripts, however, files such as `.Rprofile` can overwrite
+and/or append system R library paths.
+Removing `.Rprofile` and working from a new shell should solve the issue.
 
 ### Shell incorrectly sourced in pipeline call
 
