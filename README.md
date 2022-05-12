@@ -1,12 +1,31 @@
 # Pipeline for benchmarking atlas-level single-cell integration
 
 This repository contains the snakemake pipeline for our benchmarking study for data integration tools.
-In this study, we benchmark 16 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 68 
+In this study, we benchmark 16 methods with 4 combinations of preprocessing steps leading to 68 
 methods combinations on 85 batches of gene expression and chromatin accessibility data.
 The pipeline uses the [`scib`](https://github.com/theislab/scib.git) package and allows for reproducible and automated
 analysis of the different steps and combinations of preprocesssing and integration methods.
 
 ![Workflow](./figure.png)
+
+The pipeline compares the following tools:
+
+- [Scanorama](https://github.com/brianhie/scanorama)
+- [scANVI](https://github.com/chenlingantelope/HarmonizationSCANVI)
+- [FastMNN](https://bioconductor.org/packages/batchelor/)
+- [scGen](https://github.com/theislab/scgen)
+- [BBKNN](https://github.com/Teichlab/bbknn)
+- [scVI](https://github.com/YosefLab/scVI)
+- [Seurat v3 (CCA and RPCA)](https://github.com/satijalab/seurat)
+- [Harmony](https://github.com/immunogenomics/harmony)
+- [Conos](https://github.com/hms-dbmi/conos) [tutorial](https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/conos.html)
+- [Combat](https://scanpy.readthedocs.io/en/stable/api/scanpy.pp.combat.html) [paper](https://academic.oup.com/biostatistics/article/8/1/118/252073)
+- [MNN](https://github.com/chriscainx/mnnpy)
+- [TrVae](https://github.com/theislab/trvae)
+- [DESC](https://github.com/eleozzr/desc)
+- [LIGER](https://github.com/MacoskoLab/liger)
+- [SAUCIE](https://github.com/KrishnaswamyLab/SAUCIE)
+
 
 ## Resources
 
@@ -21,7 +40,7 @@ analysis of the different steps and combinations of preprocesssing and integrati
 ### Please cite:
 
 Luecken, M.D., Büttner, M., Chaichoompu, K. et al. Benchmarking atlas-level data integration in single-cell genomics.
-Nat Methods 19, 41–50 (2022). https://doi.org/10.1038/s41592-021-01336-8
+Nat Methods 19, 41–50 (2022). [https://doi.org/10.1038/s41592-021-01336-8](https://doi.org/10.1038/s41592-021-01336-8)
 
 ## Installation
 
@@ -107,25 +126,36 @@ snakemake --configfile configs/test_data-R3.6.yaml --rulegraph | dot -Tpng -Gran
 
 ![Snakemake workflow](./dependency.png)
 
-## Tools
 
-Tools that are compared include:
+## Troubleshooting
 
-- [Scanorama](https://github.com/brianhie/scanorama)
-- [scANVI](https://github.com/chenlingantelope/HarmonizationSCANVI)
-- [FastMNN](https://bioconductor.org/packages/batchelor/)
-- [scGen](https://github.com/theislab/scgen)
-- [BBKNN](https://github.com/Teichlab/bbknn)
-- [scVI](https://github.com/YosefLab/scVI)
-- [Seurat v3 (CCA and RPCA)](https://github.com/satijalab/seurat)
-- [Harmony](https://github.com/immunogenomics/harmony)
-- [Conos](https://github.com/hms-dbmi/conos) [tutorial](https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/conos.html)
-- [Combat](https://scanpy.readthedocs.io/en/stable/api/scanpy.pp.combat.html) [paper](https://academic.oup.com/biostatistics/article/8/1/118/252073)
-- [MNN](https://github.com/chriscainx/mnnpy)
-- [TrVae](https://github.com/theislab/trvae)
-- [DESC](https://github.com/eleozzr/desc)
-- [LIGER](https://github.com/MacoskoLab/liger)
-- [SAUCIE](https://github.com/KrishnaswamyLab/SAUCIE)
+### R installation errors
 
+If you are getting errors related to installing R packages while setting up your conda environments, please ensure that
+`$R_LIBS` points to the conda path.
+
+```shell
+echo $R_LIBS
+```
+
+```R
+.libPaths()
+```
+
+These variables should be set correctly with the installation scripts, however, files such as `.Rprofile` can overwrite
+these variables and append system R library paths.
+In those cases, removing `.Rprofile` and working from a new shell should solve the issue.
+
+### Shell incorrectly sourced in pipeline call
+
+Conda relies on a correctly initialised shell that it supports (such as bash or zsh).
+The `conda init` command writes to a `.bashrc` (or equivalent for different shells), which must be sourced when a new
+shell is opened from within the pipeline.
+If the `.bash_profile` does not source the `.bashrc`, this will lead to errors.
+Most `.bash_profile` files will contain something similar to the following line:
+
+```shell
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+```
 
 [paper]: https://doi.org/10.1038/s41592-021-01336-8
