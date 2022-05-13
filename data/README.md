@@ -1,5 +1,6 @@
 # Create Test Data
-In order to test whether the pipeline is running, here is a script that creates a small dataset.
+In order to test whether the pipeline is running, here is a script that creates a small dataset with normalised and
+log-transformed counts.
 
 Call the `generate_data.py` script
 ```
