@@ -18,22 +18,10 @@ def runIntegration(inPath, outPath, method, hvg, batch, celltype=None):
 
     adata = sc.read(inPath)
 
-    if timing:
-        if celltype is not None:
-            integrated_tmp = scib.metrics.measureTM(method, adata, batch, celltype)
-        else:
-            integrated_tmp = scib.metrics.measureTM(method, adata, batch)
-
-        integrated = integrated_tmp[2][0]
-
-        integrated.uns['mem'] = integrated_tmp[0]
-        integrated.uns['runtime'] = integrated_tmp[1]
-
+    if celltype is not None:
+        integrated = method(adata, batch, celltype)
     else:
-        if celltype is not None:
-            integrated = method(adata, batch, celltype)
-        else:
-            integrated = method(adata, batch)
+        integrated = method(adata, batch)
 
     sc.write(outPath, integrated)
 
@@ -48,7 +36,6 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output_file', required=True)
     parser.add_argument('-b', '--batch', required=True, help='Batch variable')
     parser.add_argument('-v', '--hvgs', help='Number of highly variable genes', default=2000)
-    parser.add_argument("-t", '--timing', help='Activate runtime and memory profiling', action='store_true')
     parser.add_argument("-c", '--celltype', help='Cell type variable', default=None)
 
     args = parser.parse_args()
@@ -56,7 +43,6 @@ if __name__ == '__main__':
     out = args.output_file
     batch = args.batch
     hvg = int(args.hvgs)
-    timing = args.timing
     celltype = args.celltype
     method = args.method
     methods = {

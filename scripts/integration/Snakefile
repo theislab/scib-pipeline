@@ -21,7 +21,6 @@ rule integration_run_python:
         batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
         cell_type = cfg.get_celltype_option_for_integration,
         hvgs      = cfg.get_hvg,
-        timing    = "-t" if cfg.timing else "",
         cmd       = f"conda run --no-capture-output -n {cfg.py_env} python"
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/{method}.h5ad.benchmark")
@@ -29,8 +28,7 @@ rule integration_run_python:
         """
         {params.cmd} scripts/integration/runIntegration.py \
           -i {input.adata} -o {output} \
-	      -b {params.batch_key} --method {wildcards.method} {params.hvgs} {params.cell_type} \
-	      {params.timing}
+	      -b {params.batch_key} --method {wildcards.method} {params.hvgs} {params.cell_type}
         """
 
 # ------------------------------------------------------------------------------
@@ -54,14 +52,13 @@ rule integration_run_r:
         batch_key = lambda w: cfg.get_from_scenario(w.scenario, key="batch_key"),
         hvgs      = lambda w: cfg.get_hvg(w, rules.integration_prepare.output, prep="RDS"),
         cmd       = f"conda run --no-capture-output -n {cfg.r_env} Rscript",
-        timing    = "-t" if cfg.timing else ""
     benchmark:
         str(cfg.ROOT / "{scenario}/integration/{scaling}/{hvg}/R/{method}.RDS.benchmark")
     shell:
         """
         {params.cmd} scripts/integration/runMethods.R -i {input.adata} \
             -o {output} -b {params.batch_key} \
-            --method {wildcards.method} {params.hvgs} {params.timing}
+            --method {wildcards.method} {params.hvgs}
         """
 
 
