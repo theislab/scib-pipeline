@@ -5,13 +5,13 @@ channels:
 dependencies:
   - python>=3.7
   - r-base=3.6
-  - rpy2<=3.4.2
+  - rpy2
   - pip
   - snakemake>=5
   - networkx
   - icu
   - GraphViz
-  - igraph
+  - igraph<0.10
   - gsl
   - openblas
   - llvmlite
@@ -34,7 +34,7 @@ dependencies:
   - r-seurat=3.1.1
   - pip:
 #    - scib==1.0.2
-    - git+https://github.com/theislab/scib.git
+    - git+https://github.com/theislab/scib.git@fix_rpy2
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
     - scgen==1.1.5
