@@ -28,7 +28,7 @@ dependencies:
   - bioconductor-scran
   # Methods
 #  - mnnpy=0.1.9.5
-  - scvi=0.6.7
+  - scvi-tools>=0.16.1
   - scanorama=1.7.0
   - bbknn=1.3.9
   - r-seurat=3.1.1
@@ -37,7 +37,7 @@ dependencies:
     - git+https://github.com/theislab/scib.git@fix_rpy2
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
-    - scgen==1.1.5
+    - scgen>=2.1.0
 #    - trvae==1.1.2
 #    - desc==2.0.3
 #    - keras==2.2.4
