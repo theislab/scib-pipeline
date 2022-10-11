@@ -16,7 +16,6 @@ class ParsedConfig:
         self.SCALING = config["SCALING"]
         self.FEATURE_SELECTION = config["FEATURE_SELECTION"]
         self.METHODS = config["METHODS"]
-        self.timing = config["timing"]
         self.r_env = config["r_env"]
         self.py_env = config["py_env"]
         try:
