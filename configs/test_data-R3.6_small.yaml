@@ -2,7 +2,6 @@ ROOT: data/scib-R3.6_small
 r_env : scib-R3.6
 py_env : scib-pipeline-R3.6
 
-timing: false
 unintegrated_metrics: false
 
 FEATURE_SELECTION:

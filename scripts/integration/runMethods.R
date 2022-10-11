@@ -18,8 +18,7 @@ option_list <- list(make_option(c("-m", "--method"), type="character", default=N
 		    make_option(c("-i", "--input"), type="character", default=NA, help="input data"),
 		    make_option(c("-o", "--output"), type="character", default=NA, help="output file"),
 		    make_option(c("-b", "--batch"), type="character", default=NA, help="batch variable"),
-		    make_option(c("-v", "--hvg"), type="character", default=NA, help="hvg list for seurat"),
-		    make_option(c("-t", "--timing"), action="store_true", default=FALSE, help="time the function run"))
+		    make_option(c("-v", "--hvg"), type="character", default=NA, help="hvg list for seurat"))
 
 
 
