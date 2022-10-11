@@ -33,8 +33,7 @@ dependencies:
   - bbknn=1.3.9
   - r-seurat=3.1.1
   - pip:
-#    - scib==1.0.2
-    - git+https://github.com/theislab/scib.git@fix_rpy2
+    - scib==1.0.4
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
     - scgen>=2.1.0
