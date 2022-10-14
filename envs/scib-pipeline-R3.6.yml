@@ -34,7 +34,7 @@ dependencies:
   - r-seurat=3.1.1
   - pip:
 #    - scib==1.0.4
-    - git+https://github.com/theislab/scib.git@rpy2_optional
+    - git+https://github.com/theislab/scib.git
     - igraph<0.10
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
