@@ -36,7 +36,10 @@ jobs:
       shell: bash -l {0}
       env:
         GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      run: bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
+      run: |
+        bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
+        conda activate scib-pipeline-R${{ matrix.R }}
+        conda list
 
     - name: Generate test data
       shell: bash -l {0}
