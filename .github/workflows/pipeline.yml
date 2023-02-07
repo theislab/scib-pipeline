@@ -24,20 +24,33 @@ jobs:
     #  with:
     #    image: condaforge/mambaforge:latest
     #    options: -v ${{ github.workspace }}:/workspace
-    
+
+    - name: Cache conda
+      uses: actions/cache@v2
+      env:
+        CACHE_NUMBER: 0
+      with:
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ runner.os }}-{{ matrix.R }}-conda-${{ env.CACHE_NUMBER }}
+
     - uses: conda-incubator/setup-miniconda@v2
       with:
         mamba-version: "*"
+        use-mamba: true
+        miniforge-variant: Mambaforge
         channels: conda-forge,bioconda
+        channel-priority: true
         auto-activate-base: true
         activate-environment: ""
+        use-only-tar-bz2: true
 
     - name: Setup environments
       shell: bash -l {0}
       env:
         GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        bash envs/create_conda_environments.sh -r ${{ matrix.R }} -q
+        bash envs/create_conda_environments.sh -r ${{ matrix.R }}
         conda activate scib-pipeline-R${{ matrix.R }}
         conda list
 
@@ -70,3 +83,4 @@ jobs:
       run: |
         conda activate scib-pipeline-R${{ matrix.R }}
         snakemake metrics --configfile configs/test_data-R${{ matrix.R }}.yaml -kc
+
