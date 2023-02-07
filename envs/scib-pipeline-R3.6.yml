@@ -35,7 +35,6 @@ dependencies:
   - pip:
 #    - scib==1.0.4
     - git+https://github.com/theislab/scib.git
-    - igraph<0.10
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git
     - scgen>=2.1.0
