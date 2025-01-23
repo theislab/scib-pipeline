@@ -1,5 +1,12 @@
 # Pipeline for benchmarking atlas-level single-cell integration
 
+> [!IMPORTANT]
+> This pipeline was tailored for the scib integration benchmark, but is not being developed for general-purpose dataset integration and benchmarking.
+> There are two follow-up project from this benchmkark that you can check out instead:
+> 
+> 1. For a more up-to-date project on across-dataset benchmarking of scRNA batch integration, please visit the **Openproblems living benchmark** [website](https://openproblems.bio/results/batch_integration_feature/) or [repo](https://github.com/openproblems-bio/task_batch_integration).
+> 2. If you want to **build your own integrated atlas** or make use of a ready-to-use integration benchmark, please visit the more extensive and highly scalable atlas building pipeline: https://github.com/HCA-integration/sc-atlasing-toolbox
+
 This repository contains the snakemake pipeline for our benchmarking study for data integration tools.
 In this study, we benchmark 16 methods ([see here](##tools)) with 4 combinations of preprocessing steps leading to 68 
 methods combinations on 85 batches of gene expression and chromatin accessibility data.
