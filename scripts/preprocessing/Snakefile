@@ -25,3 +25,9 @@ rule integration_prepare:
         -o {output} -b {params.batch_key} \
         --hvgs {params.hvgs} {params.scale} {params.rout} {params.seurat}
         """
+
+
+rule all:
+    input:
+        expand(rules.integration_prepare.output, prep_func, **prep_wildcards)
+    message: "Preprocessing done"

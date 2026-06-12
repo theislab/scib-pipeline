@@ -6,6 +6,7 @@ import itertools
 
 class ParsedConfig:
     OUTPUT_TYPES = ['full', 'embed', 'knn']
+    PREP_OUTPUT_TYPES = ['h5ad', 'RDS']
 
     def __init__(self, config):
 
@@ -28,6 +29,41 @@ class ParsedConfig:
 
     def get_all_feature_selections(self):
         return list(self.FEATURE_SELECTION.keys())
+
+    def get_all_preprocessing_wildcards(self, prep_types=None):
+        """
+        Collect wildcard combinations for preprocessing outputs.
+        :param prep_types: preprocessing output type(s) to include.
+            If None, includes "h5ad" and additionally "RDS" when at least
+            one R integration method is configured.
+            Valid values are ["h5ad", "RDS"].
+        :return: (comb_func, wildcards)
+            comb_func: function for combining wildcards in snakemake.io.expand
+            wildcards: dictionary containing wildcards
+        """
+        if prep_types is None:
+            prep_types = ['h5ad']
+            if self.get_all_R_methods():
+                prep_types.append('RDS')
+        elif isinstance(prep_types, str):
+            prep_types = [prep_types]
+        elif isinstance(prep_types, tuple):
+            prep_types = list(prep_types)
+
+        if not isinstance(prep_types, list):
+            raise ValueError("prep_types must be None, str, tuple, or list")
+
+        for prep in prep_types:
+            if prep not in ParsedConfig.PREP_OUTPUT_TYPES:
+                raise ValueError(f"{prep_types} not a valid preprocessing output type")
+
+        wildcards = {
+            "scenario": self.get_all_scenarios(),
+            "scaling": self.get_all_scalings(),
+            "hvg": self.get_all_feature_selections(),
+            "prep": prep_types,
+        }
+        return itertools.product, wildcards
 
     # --------------------------------------------------------------------------
     # Gets all available methods. filter for framework (R/python) if needed.
