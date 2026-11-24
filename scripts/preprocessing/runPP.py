@@ -19,6 +19,7 @@ def runPP(inPath, outPath, hvg, batch, rout, scale, seurat):
         seurat: set to true to produce hvg list
     """
 
+    print('Read data...')
     adata = sc.read(inPath)
     hvgs = adata.var.index
 
@@ -45,6 +46,10 @@ def runPP(inPath, outPath, hvg, batch, rout, scale, seurat):
     if scale:
         print("Scaling data ...")
         adata = scib.preprocessing.scale_batch(adata, batch)
+    
+    print('PCA ...')
+    sc.pp.pca(adata, mask_var='highly_variable')
+    adata.obsm['X_emb'] = adata.obsm['X_pca']
 
     if rout:
         print("Save as RDS")
@@ -55,7 +60,18 @@ def runPP(inPath, outPath, hvg, batch, rout, scale, seurat):
         sc.write(outPath, adata)
 
 
-if __name__ == '__main__':
+if 'snakemake' in dir():
+    runPP(
+        inPath=snakemake.input.adata,
+        outPath=snakemake.output[0],
+        hvg=snakemake.params.hvgs,
+        batch=snakemake.params.batch_key,
+        rout=snakemake.params.rout,
+        scale=snakemake.params.scale,
+        seurat=snakemake.params.seurat,
+    )
+
+elif __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Run the integration methods')

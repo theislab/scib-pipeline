@@ -7,6 +7,20 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+METHODS = {
+    'scanorama': scib.integration.scanorama,
+    'trvae': scib.integration.trvae,
+    'trvaep': scib.integration.trvaep,
+    'scgen': scib.integration.scgen,
+    'mnn': scib.integration.mnn,
+    'bbknn': scib.integration.bbknn,
+    'scvi': scib.integration.scvi,
+    'scanvi': scib.integration.scanvi,
+    'combat': scib.integration.combat,
+    'saucie': scib.integration.saucie,
+    'desc': scib.integration.desc
+}
+
 
 def runIntegration(inPath, outPath, method, hvg, batch, celltype=None):
     """
@@ -26,7 +40,27 @@ def runIntegration(inPath, outPath, method, hvg, batch, celltype=None):
     sc.write(outPath, integrated)
 
 
-if __name__ == '__main__':
+def get_method(method_name):
+    if method_name not in METHODS:
+        raise ValueError(
+            f'Method "{method_name}" does not exist. Please use one of '
+            f'the following:\n{list(METHODS.keys())}'
+        )
+    return METHODS[method_name]
+
+
+if 'snakemake' in dir():
+    runIntegration(
+        inPath=snakemake.input.adata,
+        outPath=snakemake.output[0],
+        method=get_method(snakemake.params.method),
+        hvg=int(snakemake.params.hvgs),
+        batch=snakemake.params.batch_key,
+        celltype=snakemake.params.cell_type,
+    )
+
+
+elif __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Run the integration methods')
@@ -45,23 +79,5 @@ if __name__ == '__main__':
     hvg = int(args.hvgs)
     celltype = args.celltype
     method = args.method
-    methods = {
-        'scanorama': scib.integration.scanorama,
-        'trvae': scib.integration.trvae,
-        'trvaep': scib.integration.trvaep,
-        'scgen': scib.integration.scgen,
-        'mnn': scib.integration.mnn,
-        'bbknn': scib.integration.bbknn,
-        'scvi': scib.integration.scvi,
-        'scanvi': scib.integration.scanvi,
-        'combat': scib.integration.combat,
-        'saucie': scib.integration.saucie,
-        'desc': scib.integration.desc
-    }
-
-    if method not in methods.keys():
-        raise ValueError(f'Method "{method}" does not exist. Please use one of '
-                         f'the following:\n{list(methods.keys())}')
-
-    run = methods[method]
+    run = get_method(method)
     runIntegration(file, out, run, hvg, batch, celltype)

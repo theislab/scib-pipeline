@@ -1,4 +1,9 @@
-rule integration_prepare:
+from ScibConfig import *
+
+cfg = ParsedConfig(config)
+prep_func, prep_wildcards = cfg.get_all_preprocessing_wildcards()
+
+rule preprocessing:
     input:
         adata  = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="file")
     output: cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/adata_pre.{prep}"
@@ -12,22 +17,19 @@ rule integration_prepare:
     params:
         batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
         hvgs      = lambda wildcards: cfg.get_feature_selection(wildcards.hvg),
-        scale     = lambda wildcards: "-s" if wildcards.scaling == "scaled" else "",
-        rout      = lambda wildcards: "-r" if wildcards.prep == "RDS" else "",
-        seurat    = lambda wildcards: "-l" if wildcards.prep == "RDS" else "",
-        env       = f"conda run -n {cfg.py_env}"
+        scale     = lambda wildcards: wildcards.scaling == "scaled",
+        rout      = lambda wildcards: wildcards.prep == "RDS",
+        seurat    = lambda wildcards: wildcards.prep == "RDS"
     benchmark:
         str(cfg.ROOT / "{scenario}/prepare/{scaling}/{hvg}/prep_{prep}.benchmark")
         #join_path(cfg.get_filename_pattern("prepare", "directory_by_setting"), "prep_{prep}.benchmark")
-    shell:
-        """
-        {params.env} python scripts/preprocessing/runPP.py -i {input.adata} \
-        -o {output} -b {params.batch_key} \
-        --hvgs {params.hvgs} {params.scale} {params.rout} {params.seurat}
-        """
+    conda: cfg.py_env
+    threads: 4
+    script:
+        "runPP.py"
 
 
 rule all:
     input:
-        expand(rules.integration_prepare.output, prep_func, **prep_wildcards)
+        expand(rules.preprocessing.output, prep_func, **prep_wildcards)
     message: "Preprocessing done"

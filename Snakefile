@@ -7,16 +7,34 @@ wildcard_constraints:
     scaling="scaled|unscaled",
     method="[^/]+"
 
-include: "scripts/preprocessing/Snakefile"
-include: "scripts/integration/Snakefile"
-include: "scripts/metrics/Snakefile"
-include: "scripts/visualization/Snakefile"
+
+module preprocessing:
+    snakefile: "scripts/preprocessing/Snakefile"
+    config: config
+
+
+module integration:
+    snakefile: "scripts/integration/Snakefile"
+    config: config
+
+module metrics:
+    snakefile: "scripts/metrics/Snakefile"
+    config: config
+
+module visualization:
+    snakefile: "scripts/visualization/Snakefile"
+    config: config
+
+use rule * from preprocessing as preprocessing_ *
+use rule * from integration as integration_ *
+use rule * from metrics as metrics_ *
+use rule * from visualization as visualization_ *
 
 rule all:
     input:
-        rules.integration.input,
-        rules.metrics.output,
-        rules.embeddings.output
+        rules.integration_all.input,
+        rules.metrics_all.output,
+        rules.visualization_all.output
 
 # ------------------------------------------------------------------------------
 # Merge benchmark files

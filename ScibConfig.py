@@ -224,11 +224,11 @@ class ParsedConfig:
 
     def get_integrated_for_metrics(self, rules, method):
         if method == "unintegrated":
-            return Path(rules.integration_prepare.output[0]).with_suffix(".h5ad")
+            return Path(rules.preprocessing.output[0]).with_suffix(".h5ad")
         elif self.get_from_method(method, "R"):
             return rules.convert_RDS_h5ad.output
         else:
-            return rules.integration_run_python.output
+            return rules.run_python.output
 
     def get_celltype_option_for_integration(self, wildcards):
         if self.get_from_method(wildcards.method, "use_celltype"):

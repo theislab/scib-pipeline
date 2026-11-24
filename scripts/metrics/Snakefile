@@ -1,7 +1,11 @@
+from ScibConfig import *
+
+cfg = ParsedConfig(config)
+
 # ------------------------------------------------------------------------------
 # Compute metrics
 # ------------------------------------------------------------------------------
-rule metrics_single:
+rule single:
     input:
         u      = lambda w: cfg.get_from_scenario(w.scenario, key="file"),
         i      = lambda w: cfg.get_integrated_for_metrics(rules, w.method)
@@ -28,25 +32,25 @@ rule metrics_single:
 
 
 umetr_func, umetr_wildcards = cfg.get_all_wildcards(type_="unintegrated", output_types=True)
-rule metrics_unintegrated:
-    input: expand(rules.metrics_single.output, umetr_func, **umetr_wildcards)
+rule unintegrated:
+    input: expand(rules.single.output, umetr_func, **umetr_wildcards)
     message: "Collect all unintegrated metrics"
 
 
 metr_func, metr_wildcards = cfg.get_all_wildcards(type_="default", output_types=True)
-rule metrics_integrated:
-    input: expand(rules.metrics_single.output, metr_func, **metr_wildcards)
+rule integrated:
+    input: expand(rules.single.output, metr_func, **metr_wildcards)
     message: "Collect all integrated metrics"
 
 
 def all_metrics(wildcards):
-    files = rules.metrics_integrated.input
+    files = rules.integrated.input
     if cfg.unintegrated_m:
-        files.extend(rules.metrics_unintegrated.input)
+        files.extend(rules.unintegrated.input)
     return files
 
 
-rule metrics:
+rule all:
     input:
         tables = all_metrics
     output:

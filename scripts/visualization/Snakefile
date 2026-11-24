@@ -1,3 +1,7 @@
+from ScibConfig import *
+
+cfg = ParsedConfig(config)
+
 # ------------------------------------------------------------------------------
 # Save embeddings
 # ------------------------------------------------------------------------------
@@ -19,14 +23,12 @@ rule embeddings_single:
     params:
         batch_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="batch_key"),
         label_key = lambda wildcards: cfg.get_from_scenario(wildcards.scenario, key="label_key"),
-        cmd       = f"conda run -n {cfg.py_env} python"
-    shell:
-        """
-        {params.cmd} scripts/visualization/save_embeddings.py \
-            --input {input.adata} --outfile {output.coords} \
-            --method {wildcards.method} --batch_key {params.batch_key} \
-            --label_key {params.label_key} --result {wildcards.o_type}
-        """
+        method    = lambda wildcards: wildcards.method,
+        result    = lambda wildcards: wildcards.o_type
+    conda: cfg.py_env
+    threads: 4
+    script:
+        "save_embeddings.py"
 
 
 uemb_func, uemb_wildcards = cfg.get_all_wildcards(type_="unintegrated", output_types=True)
@@ -53,7 +55,7 @@ def all_embeddings(wildcards):
     return files
 
 
-rule embeddings:
+rule all:
     input:
         csvs = all_embeddings
     output: cfg.ROOT / "embeddings.csv"
